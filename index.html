@@ -6,134 +6,75 @@
 <meta name="robots" content="noindex,nofollow">
 <title>Twenty Minute English</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
 <style>
-/* Layout: one narrow exercise-book column, a sticky five-step strip on top, one task on screen at a time. */
+/* One quiet column, one step per screen, one accent. */
 :root{
-  --bg:#F4F6FB; --paper:#FFFFFF; --ink:#1B2340; --muted:#5D6685; --line:#D9DEEC;
-  --accent:#2F4BD8; --accent-ink:#FFFFFF; --mark:#FFE36E; --mark-ink:#1B2340;
-  --good:#17784F; --good-bg:#E3F5EC; --bad:#C42F42; --bad-bg:#FCE7EA;
-  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
-  --body:"Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
-  --mono:"JetBrains Mono", ui-monospace, Consolas, monospace;
+  --bg:#FAFAFB; --surface:#FFFFFF; --ink:#16181F; --muted:#6B7080; --line:#E4E6EC;
+  --accent:#3046D6; --on-accent:#FFFFFF; --good:#1A7F52; --bad:#C23347; --soft:#F1F2F6;
+  --display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#11142A; --paper:#1A1E38; --ink:#E7EAF7; --muted:#A3AAC8; --line:#2E3458;
-  --accent:#8EA2FF; --accent-ink:#11142A; --mark:#5C4E12; --mark-ink:#FFF3C2;
-  --good:#5BD6A0; --good-bg:#15372B; --bad:#FF8593; --bad-bg:#3D1C25; color-scheme:dark}}
+  --bg:#111217; --surface:#1A1C23; --ink:#ECEDF2; --muted:#9A9FB0; --line:#2B2E38;
+  --accent:#8FA0FF; --on-accent:#111217; --good:#5BD19C; --bad:#FF8597; --soft:#20232B; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#11142A; --paper:#1A1E38; --ink:#E7EAF7; --muted:#A3AAC8; --line:#2E3458;
-  --accent:#8EA2FF; --accent-ink:#11142A; --mark:#5C4E12; --mark-ink:#FFF3C2;
-  --good:#5BD6A0; --good-bg:#15372B; --bad:#FF8593; --bad-bg:#3D1C25; color-scheme:dark}
+  --bg:#111217; --surface:#1A1C23; --ink:#ECEDF2; --muted:#9A9FB0; --line:#2B2E38;
+  --accent:#8FA0FF; --on-accent:#111217; --good:#5BD19C; --bad:#FF8597; --soft:#20232B; color-scheme:dark}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font:17px/1.55 var(--body);margin:0}
-.wrap{max-width:640px;margin:0 auto;padding-inline:16px;padding-block:0 48px}
-h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.15}
-h1{font-size:1.9rem;font-weight:800}
-h2{font-size:1.45rem;font-weight:800}
-h3{font-size:1.1rem;font-weight:600}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:17px/1.55 var(--body)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);height:3px;background:var(--line);z-index:2}
+.bar i{display:block;height:100%;background:var(--accent);transition:width .3s}
+main{max-width:520px;margin:0 auto;padding-inline:20px;padding-block:40px 56px;display:flex;flex-direction:column;gap:22px}
+h1,h2{font-family:var(--display);font-weight:700;line-height:1.1;margin:0;text-wrap:balance}
+h1{font-size:2.4rem}
+h2{font-size:1.7rem}
 p{margin:0}
-.steps{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding-block:10px}
-.steps ol{list-style:none;margin:0 auto;padding:0 16px;max-width:640px;display:flex;gap:6px}
-.steps li{flex:1;min-width:0;text-align:center;font:500 .7rem/1.2 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.steps li::before{content:"";display:block;height:5px;border-radius:3px;background:var(--line);margin-bottom:6px}
-.steps li.done::before{background:var(--accent);opacity:.45}
-.steps li.on{color:var(--ink)}
-.steps li.on::before{background:var(--accent)}
-.stack{display:flex;flex-direction:column;gap:18px;margin-top:22px}
-.eyebrow{font:500 .75rem/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.lede{color:var(--muted)}
-.card{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0}
-.pick{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media (max-width:420px){.pick{grid-template-columns:1fr}}
-.who{all:unset;cursor:pointer;background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:4px}
-.who:hover{border-color:var(--accent)}
-.who:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.who b{font:800 1.3rem/1.1 var(--display)}
-.who span{color:var(--muted);font-size:.95rem}
-.mark{background:var(--mark);color:var(--mark-ink);padding:0 .2em;border-radius:3px}
-.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
-.scale button{all:unset;cursor:pointer;text-align:center;border:1px solid var(--line);border-radius:10px;padding:8px 2px;font:500 1rem/1 var(--mono);background:var(--bg)}
-.scale button small{display:block;font:400 .62rem/1.2 var(--body);color:var(--muted);margin-top:4px}
-.scale button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-.scale button[aria-pressed="true"] small{color:var(--accent-ink)}
-.sq{display:flex;flex-direction:column;gap:10px;padding-block:14px;border-top:1px solid var(--line)}
-.sq:first-child{border-top:0;padding-top:0}
-.sq p{font-weight:700}
-.sq .tag{font:500 .68rem/1 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.btn{all:unset;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:12px 22px;font:700 1rem/1 var(--body);background:var(--accent);color:var(--accent-ink)}
-.btn[disabled]{opacity:.4;cursor:not-allowed}
-.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.muted{color:var(--muted)}
+.small{font-size:.9rem;color:var(--muted)}
+.btn{all:unset;box-sizing:border-box;cursor:pointer;text-align:center;border-radius:12px;padding:15px 20px;font:700 1rem/1 var(--body);background:var(--accent);color:var(--on-accent);width:100%}
+.btn.line{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn[disabled]{opacity:.35;cursor:not-allowed}
+.btn:focus-visible,.opt:focus-visible,.chip:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.name{all:unset;cursor:pointer;text-align:center;border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:34px 10px;font:700 1.4rem/1 var(--display)}
+.name:hover{border-color:var(--accent)}
+ol.plan{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:8px}
+.clock{font:700 4.2rem/1 var(--display);font-variant-numeric:tabular-nums;text-align:center;letter-spacing:-.02em}
+.topic{font:700 1.5rem/1.2 var(--display);text-align:center}
+.wheel{position:relative;width:min(300px,80vw);aspect-ratio:1;margin:0 auto;max-width:100%}
+.wheel canvas{width:100%;height:100%;display:block;border-radius:50%;transition:transform 4s cubic-bezier(.15,.85,.2,1)}
+.wheel::after{content:"";position:absolute;left:50%;top:-6px;transform:translateX(-50%);border:10px solid transparent;border-top:16px solid var(--accent)}
+.mic{all:unset;cursor:pointer;width:112px;height:112px;border-radius:50%;margin:0 auto;display:grid;place-items:center;background:var(--accent);color:var(--on-accent);font:700 1rem/1 var(--body)}
+.mic.on{background:var(--bad)}
+@media (prefers-reduced-motion:no-preference){.mic.on{animation:pulse 1.4s infinite}@keyframes pulse{50%{box-shadow:0 0 0 14px color-mix(in srgb,var(--bad) 20%,transparent)}}}
+@media (prefers-reduced-motion:reduce){.wheel canvas{transition:none}}
+.rule{border-left:3px solid var(--accent);padding-left:14px;display:flex;flex-direction:column;gap:6px}
+.ex p{margin:0}
+.ex .no{color:var(--bad);text-decoration:line-through}
+.ex .yes{color:var(--good)}
+.q{font-size:1.15rem;font-weight:700}
+.kind{font-size:.85rem;color:var(--muted);display:flex;justify-content:space-between}
 .opts{display:flex;flex-direction:column;gap:8px}
-.opt{all:unset;cursor:pointer;border:1px solid var(--line);border-radius:10px;padding:11px 14px;background:var(--bg)}
-.opt[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
-.opt.right{background:var(--good-bg);border-color:var(--good);color:var(--ink)}
-.opt.wrong{background:var(--bad-bg);border-color:var(--bad);text-decoration:line-through;text-decoration-color:var(--bad)}
+.opt{all:unset;cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:13px 15px}
+.opt.right,.chip.right{border-color:var(--good);box-shadow:inset 0 0 0 1px var(--good)}
+.opt.wrong,.chip.wrong{border-color:var(--bad);box-shadow:inset 0 0 0 1px var(--bad)}
 .parts{display:flex;flex-wrap:wrap;gap:8px}
-.chip{all:unset;cursor:pointer;border:1px dashed var(--muted);border-radius:8px;padding:8px 11px;background:var(--bg)}
-.chip[aria-pressed="true"]{border-style:solid;border-color:var(--accent)}
-.chip.right{background:var(--good-bg);border:1px solid var(--good)}
-.chip.wrong{background:var(--bad-bg);border:1px solid var(--bad)}
-.tray{min-height:48px;border:1px solid var(--line);border-radius:10px;padding:8px;display:flex;flex-wrap:wrap;gap:8px;background:var(--bg)}
-.tray:empty::before{content:"Tap the words below in order";color:var(--muted);font-size:.9rem;padding:6px}
-input[type=text],textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 13px}
-textarea{min-height:110px;resize:vertical}
-.q{font-size:1.12rem;font-weight:700}
-.kind{display:flex;justify-content:space-between;gap:10px;font:500 .75rem/1.2 var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.fb{border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
-.fb.ok{background:var(--good-bg);border-left:4px solid var(--good)}
-.fb.no{background:var(--bad-bg);border-left:4px solid var(--bad)}
-.fb.info{background:var(--bg);border-left:4px solid var(--accent)}
-.fb b{font-family:var(--display)}
-.dots{display:flex;flex-wrap:wrap;gap:5px}
-.dots i{width:12px;height:12px;border-radius:50%;background:var(--line);display:block}
-.dots i.ok{background:var(--good)}
-.dots i.no{background:var(--bad)}
-.dots i.cur{outline:2px solid var(--accent);outline-offset:1px}
-.concept table{width:100%;border-collapse:collapse;font-size:.95rem}
-.concept th,.concept td{text-align:left;vertical-align:top;padding:8px 6px;border-top:1px solid var(--line)}
-.concept th{font:500 .72rem/1.2 var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-.tablebox{overflow-x:auto}
-.ex{display:flex;flex-direction:column;gap:6px;padding-left:12px;border-left:3px solid var(--mark)}
-.wrongline{color:var(--bad);text-decoration:line-through}
-.timer{font:500 2rem/1 var(--mono);font-variant-numeric:tabular-nums}
-.big{font:800 3rem/1 var(--display)}
-.hist{display:flex;flex-direction:column;gap:0}
-.hist div{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
-.hist div:first-child{border-top:0}
-pre{white-space:pre-wrap;word-break:break-word;font:400 .78rem/1.45 var(--mono);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;max-height:260px;overflow:auto;margin:0}
-.small{font-size:.88rem;color:var(--muted)}
-@media (prefers-reduced-motion:no-preference){.card{animation:in .25s ease-out}@keyframes in{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}}
+.chip{all:unset;cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 12px}
+.tray{min-height:50px;border-bottom:2px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;padding-bottom:8px}
+input[type=text],textarea{width:100%;font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+textarea{min-height:120px;resize:vertical}
+.fb{display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-radius:12px;background:var(--soft)}
+.fb b.ok{color:var(--good)} .fb b.no{color:var(--bad)}
+.center{text-align:center}
 </style>
 </head>
 <body>
-<nav class="steps" aria-label="Session steps"><ol id="steps"></ol></nav>
-<main class="wrap" id="app"></main>
+<div class="bar"><i id="bar" style="width:0"></i></div>
+<main id="app"></main>
 <script>
-const DAY = 1;
-const TOPICS = {
-  constitution: {name:"The Constitution", hint:"Rights, duties and how India governs itself",
-    prompt:"Talk about the Indian Constitution",
-    read:"Read about the Preamble and the Fundamental Rights (Part III). Pick 3 points you can explain in your own words: what it says, why it matters, and one example from daily life."},
-  engineering: {name:"Engineering", hint:"Something you build and how it works",
-    prompt:"Talk about something you have engineered",
-    read:"Pick one thing you have built or worked on. Plan 3 points: what it does, how it works, and one problem you solved along the way."}
-};
-const SELF = [
-  {k:"Speaking",   q:"I can speak for 2 minutes on a topic without long pauses."},
-  {k:"Speaking",   q:"I use the right tense (past, present, future) without thinking hard."},
-  {k:"Speaking",   q:"People understand my point the first time I say it."},
-  {k:"Speaking",   q:"I notice my own mistakes while I am speaking."},
-  {k:"Writing",    q:"I can write a short paragraph with no grammar mistakes."},
-  {k:"Writing",    q:"I use a, an and the correctly when I write."},
-  {k:"Writing",    q:"I can write a formal message, to a teacher or an office, without help."},
-  {k:"Confidence", q:"I feel comfortable speaking English in front of other people."},
-  {k:"Confidence", q:"I think in English while speaking, without translating in my head first."},
-  {k:"Confidence", q:"I would be ready to give an interview in English tomorrow."}
-];
-const SCALE = ["Never","Rarely","Sometimes","Mostly","Always"];
-
+const SB_URL='https://tyusfrpcqeholwwfkvzb.supabase.co', SB_KEY='sb_publishable_VHtdUZlWKyQIIBr_pXpqjg_Qs0Z5aPD';
 const SETS = {
 constitution: [
  {t:"mcq", kind:"Past or present perfect", q:"The Constituent Assembly ___ the Constitution on 26 November 1949.",
@@ -219,314 +160,163 @@ engineering: [
   model:"I have built a voice note app this year. Last Sunday I tested it on my phone.",
   why:"Use has/have + past participle for a period that reaches today, and the simple past for a finished day."}
 ]};
+const SETFOR = {archita:"constitution", piyus:"engineering"};
+const NAMES = {piyus:"Piyus", archita:"Archita"};
+const TOPICS = ["The Constitution","Engineering","Technology","Environment","Education","Health","Sports","Films","Food","Travel","Social media","My hometown"];
+const STEPS = 9;
 
-/* ---------- State ---------- */
-const blank = () => ({step:0, set:null, self:Array(10).fill(0), selfNote:"", qi:0, ans:{}, writing:"", note:"", rec:null, sent:false});
-let S = blank();
-const KEY = "tme-draft-day"+DAY, HKEY = "tme-history";
-function persist(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
-function restore(){ try{ const v = JSON.parse(localStorage.getItem(KEY)||"null"); if(v && v.self) S = Object.assign(blank(), v); }catch(e){} }
-function history(){ try{ return JSON.parse(localStorage.getItem(HKEY)||"[]"); }catch(e){ return []; } }
-function addHistory(row){ try{ const h=history().filter(r=>!(r.day===row.day && r.set===row.set)); h.unshift(row); localStorage.setItem(HKEY, JSON.stringify(h.slice(0,40))); }catch(e){} }
+let S = {step:0, who:null, topic:null, qi:0, ans:{}, writing:"", sent:false, stamp:null};
+const KEY="tme2";
+const persist=()=>{ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} };
+try{ const v=JSON.parse(localStorage.getItem(KEY)||"null"); if(v && v.stamp===today()) S=Object.assign(S,v); }catch(e){}
+function today(){ return new Date().toLocaleDateString("en-CA"); }
 
-const $ = (t, attrs={}, kids=[]) => { const e=document.createElement(t); for(const [k,v] of Object.entries(attrs)){ if(k==="text") e.textContent=v; else if(k==="on") for(const [ev,f] of Object.entries(v)) e.addEventListener(ev,f); else if(v!==false && v!=null) e.setAttribute(k, v===true?"":v); } for(const c of [].concat(kids)) if(c!=null) e.append(c); return e; };
-const norm = s => String(s||"").toLowerCase().replace(/[’‘]/g,"'").replace(/[“”"]/g,"").replace(/\s+/g," ").trim().replace(/[.!?]+$/,"").trim();
-const topic = () => TOPICS[S.set];
-
-const STEPS = ["Topic","Self-check","Speak","Concept","Practice","Send"];
-function renderSteps(){
-  const ol = document.getElementById("steps"); ol.replaceChildren();
-  STEPS.forEach((s,i)=> ol.append($("li",{class: i===S.step?"on":(i<S.step?"done":""), text:s, "aria-current": i===S.step?"step":false})));
+const $=(t,a={},k=[])=>{ const e=document.createElement(t); for(const [x,v] of Object.entries(a)){ if(x==="text") e.textContent=v; else if(x==="on") for(const [ev,f] of Object.entries(v)) e.addEventListener(ev,f); else if(v!==false&&v!=null) e.setAttribute(x,v===true?"":v); } for(const c of [].concat(k)) if(c!=null) e.append(c); return e; };
+const norm=s=>String(s||"").toLowerCase().replace(/[’‘]/g,"'").replace(/[“”"]/g,"").replace(/\s+/g," ").trim().replace(/[.!?]+$/,"").trim();
+const fmt=s=>Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+let timers=[]; const clear=()=>{ timers.forEach(clearInterval); timers=[]; };
+function go(n){ clear(); S.step=n; S.stamp=today(); persist(); render(); scrollTo({top:0}); }
+const next=(label,n,dis)=>$("button",{class:"btn",disabled:!!dis,on:{click:()=>go(n)}},label);
+function render(){
+  document.getElementById("bar").style.width=(S.step/(STEPS-1)*100)+"%";
+  const app=document.getElementById("app"); app.replaceChildren();
+  [welcome,who,plan,wheel,read,speak,concept,practice,done][S.step]().forEach(x=>app.append(x));
 }
-function go(n){ stopTimers(); S.step=n; persist(); render(); window.scrollTo({top:0}); }
-function render(){ renderSteps(); const app=document.getElementById("app"); app.replaceChildren(); app.append([viewTopic,viewSelf,viewSpeak,viewConcept,viewPractice,viewSend][S.step]()); }
-let timers=[]; function stopTimers(){ timers.forEach(clearInterval); timers=[]; }
-function countdown(secs, label, onEnd){
-  let left=secs; const tm=$("span",{class:"timer",text:fmt(secs)}); let id=null;
-  const btn=$("button",{class:"btn ghost",on:{click:()=>{ clearInterval(id); left=secs; tm.textContent=fmt(left); btn.textContent="Restart"; id=setInterval(()=>{ left=Math.max(0,left-1); tm.textContent=fmt(left); if(!left){ clearInterval(id); onEnd&&onEnd(); } },1000); timers.push(id); }}},label);
-  return $("div",{class:"row"},[tm,btn]);
-}
-const fmt = s => Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
 
-/* ---------- 1. Topic ---------- */
-function viewTopic(){
-  const pick = $("div",{class:"pick"});
-  for(const [id,t] of Object.entries(TOPICS)){
-    pick.append($("button",{class:"who", on:{click:()=>{ if(S.set!==id){ S=blank(); } S.set=id; go(1); }}},[
-      $("b",{text:t.name}), $("span",{text:t.hint})]));
+async function upload(path, blob, type){
+  const r=await fetch(SB_URL+"/storage/v1/object/english/"+path,{method:"POST",headers:{apikey:SB_KEY,"Content-Type":type},body:blob});
+  if(!r.ok) throw new Error(r.status);
+}
+const hm=()=>{ const d=new Date(); return String(d.getHours()).padStart(2,"0")+String(d.getMinutes()).padStart(2,"0"); };
+
+/* 1 */ function welcome(){ return [
+  $("h1",{text:"Welcome"}),
+  $("p",{class:"muted",text:"Twenty minutes of English, every day."}),
+  next("Start",1)]; }
+
+/* 2 */ function who(){
+  const g=$("div",{class:"two"});
+  for(const id of ["piyus","archita"]) g.append($("button",{class:"name",on:{click:()=>{ if(S.who!==id){ S.ans={}; S.qi=0; S.writing=""; S.sent=false; S.saved=false; S.topic=null; } S.who=id; go(2); }}},NAMES[id]));
+  return [$("h2",{text:"Who are you?"}), g]; }
+
+/* 3 */ function plan(){ return [
+  $("h2",{text:"Today, "+NAMES[S.who]}),
+  $("ol",{class:"plan"},["Spin for a topic","Read for 3 minutes","Speak for 2 minutes","Learn one rule","Answer 15 questions"].map(t=>$("li",{text:t}))),
+  next("Spin the wheel",3)]; }
+
+/* 4 */ function wheel(){
+  const n=TOPICS.length, seg=360/n;
+  const c=$("canvas",{width:600,height:600,"aria-label":"Topic wheel"});
+  const box=$("div",{class:"wheel"},c);
+  const cs=getComputedStyle(document.documentElement), v=k=>cs.getPropertyValue(k).trim();
+  const x=c.getContext("2d"); const R=300;
+  for(let i=0;i<n;i++){
+    const a0=(i*seg-90)*Math.PI/180, a1=((i+1)*seg-90)*Math.PI/180;
+    x.beginPath(); x.moveTo(R,R); x.arc(R,R,R,a0,a1); x.closePath();
+    x.fillStyle = i%2? v("--surface") : v("--soft"); x.fill();
+    x.strokeStyle=v("--line"); x.lineWidth=2; x.stroke();
+    x.save(); x.translate(R,R); x.rotate((a0+a1)/2); x.textAlign="right"; x.fillStyle=v("--ink"); x.font="700 26px "+v("--body");
+    x.fillText(TOPICS[i], R-26, 9); x.restore();
   }
-  return $("section",{class:"stack"},[
-    $("p",{class:"eyebrow",text:"Day "+DAY+" · 20 minutes"}),
-    $("h1",{text:"Pick your topic"}),
-    $("p",{class:"lede",text:"Each of you uses your own phone and your own topic. Nothing leaves your phone until you press Send at the end."}),
-    pick,
-    $("div",{class:"card"},[
-      $("h3",{text:"Today's 20 minutes"}),
-      $("p",{},["Self-check · 3 min reading your topic · 2 min speaking, ",$("span",{class:"mark",text:"recorded"})," · 5 min on one grammar rule · 5 min practice · send."])
-    ]),
-    historyCard()
-  ]);
-}
+  let turned=0;
+  const out=$("p",{class:"topic",text:S.topic||" "});
+  const go1=next("Next: read",4,!S.topic);
+  const spin=$("button",{class:"btn line",on:{click:()=>{
+    spin.disabled=true; go1.disabled=true;
+    const k=Math.floor(Math.random()*n);
+    turned += 360*5 + ((360-(k+0.5)*seg) - (turned%360) + 360)%360;
+    c.style.transform="rotate("+turned+"deg)";
+    const end=()=>{ S.topic=TOPICS[k]; persist(); out.textContent=S.topic; spin.disabled=false; spin.textContent="Spin again"; go1.disabled=false; };
+    matchMedia("(prefers-reduced-motion: reduce)").matches ? end() : setTimeout(end,4100);
+  }}}, S.topic?"Spin again":"Spin");
+  return [$("h2",{text:"Your topic"}), box, out, spin, go1]; }
 
-/* ---------- 2. Self-check ---------- */
-function viewSelf(){
-  const card = $("div",{class:"card"});
-  const next = $("button",{class:"btn",disabled:S.self.includes(0), on:{click:()=>go(2)}},"Next: speak");
-  SELF.forEach((it,i)=>{
-    const sc = $("div",{class:"scale",role:"group","aria-label":it.q});
-    SCALE.forEach((lab,j)=>{
-      sc.append($("button",{"aria-pressed": String(S.self[i]===j+1), on:{click:()=>{ S.self[i]=j+1; persist(); sc.querySelectorAll("button").forEach((x,k)=>x.setAttribute("aria-pressed",String(k===j))); next.disabled = S.self.includes(0); }}},[String(j+1), $("small",{text:lab})]));
-    });
-    card.append($("div",{class:"sq"},[$("span",{class:"tag",text:(i+1)+" · "+it.k}), $("p",{text:it.q}), sc]));
-  });
-  const note = $("textarea",{id:"selfnote",placeholder:"Optional: the one thing you most want to fix this week"});
-  note.value=S.selfNote; note.addEventListener("input",()=>{S.selfNote=note.value; persist();});
-  card.append($("div",{class:"sq"},[$("span",{class:"tag",text:"Your words"}), note]));
-  return $("section",{class:"stack"},[
-    $("p",{class:"eyebrow",text:topic().name+" · Self-check"}),
-    $("h2",{text:"How good is your English today?"}),
-    $("p",{class:"lede",text:"Be honest. Nobody marks this. It is the starting line you compare against at the end of the week."}),
-    card,
-    $("div",{class:"row"},[$("button",{class:"btn ghost",on:{click:()=>go(0)}},"Back"), next])
-  ]);
-}
+/* 5 */ function read(){
+  let left=180; const clk=$("div",{class:"clock",text:fmt(left)});
+  const b=$("button",{class:"btn line",on:{click:()=>{ clear(); left=180; b.textContent="Restart"; timers.push(setInterval(()=>{ left=Math.max(0,left-1); clk.textContent=fmt(left); if(!left) clear(); },1000)); }}},"Start 3 minutes");
+  return [$("h2",{text:"Read and explore"}), $("p",{class:"topic",text:S.topic}), clk, b, next("Next: speak",5)]; }
 
-/* ---------- 3. Speak (read 3 min, record 2 min) ---------- */
-let rec=null, chunks=[], recBlob=null, recUrl=null;
-function pickMime(){ const c=["audio/webm;codecs=opus","audio/webm","audio/mp4","audio/ogg"]; if(!window.MediaRecorder) return null; for(const m of c){ try{ if(MediaRecorder.isTypeSupported(m)) return m; }catch(e){} } return ""; }
-function recName(){ const ext = recBlob && /mp4/.test(recBlob.type) ? "m4a" : (recBlob && /ogg/.test(recBlob.type) ? "ogg" : "webm"); return "day"+DAY+"-"+S.set+"-"+new Date().toLocaleDateString("en-CA")+"."+ext; }
-function viewSpeak(){
-  const t=topic();
-  const recBox=$("div",{class:"stack",style:"margin-top:0"});
-  const drawRec=()=>{
-    recBox.replaceChildren();
-    const mime=pickMime();
-    if(mime===null || !navigator.mediaDevices){ recBox.append($("p",{class:"small",text:"This browser can't record. Use your phone's voice recorder instead."})); return; }
-    const clock=$("span",{class:"timer",text:"2:00"});
-    if(rec && rec.state==="recording"){
-      recBox.append($("div",{class:"row"},[clock,$("button",{class:"btn",on:{click:()=>rec.stop()}},"Stop")]));
-      let left=120; const id=setInterval(()=>{ left--; clock.textContent=fmt(Math.max(0,left)); if(left<=0){ clearInterval(id); if(rec&&rec.state==="recording") rec.stop(); } },1000); timers.push(id);
-      return;
-    }
-    if(recBlob){
-      const au=$("audio",{controls:true,src:recUrl,style:"width:100%"});
-      recBox.append(au, $("div",{class:"row"},[
-        $("button",{class:"btn ghost",on:{click:()=>saveFile(recBlob, recName())}},"Save to phone"),
-        $("button",{class:"btn ghost",on:{click:()=>shareFile(recBlob, recName())}},"Share"),
-        $("button",{class:"btn ghost",on:{click:()=>{ recBlob=null; S.rec=null; persist(); drawRec(); }}},"Record again")]));
-      recBox.append($("p",{class:"small",text:"Save it before you leave this page. The page does not keep the audio."}));
-      return;
-    }
-    recBox.append($("button",{class:"btn",on:{click:async()=>{
-      try{
-        const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-        chunks=[]; rec = mime ? new MediaRecorder(stream,{mimeType:mime}) : new MediaRecorder(stream);
-        rec.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); };
-        rec.onstop=()=>{ stream.getTracks().forEach(x=>x.stop()); recBlob=new Blob(chunks,{type:rec.mimeType||mime||"audio/webm"}); if(recUrl) URL.revokeObjectURL(recUrl); recUrl=URL.createObjectURL(recBlob); S.rec=recName(); persist(); stopTimers(); drawRec(); };
-        rec.start(); drawRec();
-      }catch(e){ recBox.append($("p",{class:"small",text:"The microphone was blocked. Allow it in the browser, or use your phone's voice recorder."})); }
-    }}},"Start recording (2 min)"));
-  };
-  drawRec();
-  return $("section",{class:"stack"},[
-    $("p",{class:"eyebrow",text:t.name+" · Speak"}),
-    $("h2",{text:t.prompt}),
-    $("div",{class:"card"},[$("h3",{text:"1. Read and explore · 3 minutes"}), $("p",{text:t.read}), countdown(180,"Start 3 min")]),
-    $("div",{class:"card"},[$("h3",{text:"2. Speak · 2 minutes"}), $("p",{text:"Say your points out loud while your partner listens. Don't stop to correct yourself. Your partner notes the mistakes."}), recBox]),
-    $("div",{class:"row"},[$("button",{class:"btn ghost",on:{click:()=>go(1)}},"Back"), $("button",{class:"btn",on:{click:()=>{ if(rec&&rec.state==="recording") rec.stop(); go(3); }}},"Next: today's rule")])
-  ]);
-}
-async function shareFile(blob,name){
-  const f=new File([blob],name,{type:blob.type});
-  try{ if(navigator.canShare && navigator.canShare({files:[f]})){ await navigator.share({files:[f],title:name}); return; } }catch(e){ if(e&&e.name==="AbortError") return; }
-  saveFile(blob,name);
-}
-function saveFile(blob,name){ const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.append(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},1000); }
-
-/* ---------- 4. Concept ---------- */
-function viewConcept(){
-  const ex = (good,bad,why) => $("div",{class:"ex"},[ $("p",{},[$("b",{text:"✓ "}),good]), bad?$("p",{class:"wrongline",text:"✗ "+bad}):null, $("p",{class:"small",text:why}) ]);
-  const isC = S.set==="constitution";
-  return $("section",{class:"stack concept"},[
-    $("p",{class:"eyebrow",text:"Rule 1 · 5 minutes"}),
-    $("h2",{text:"“I have done” or “I did”?"}),
-    $("p",{class:"lede",text:"The most common mistake in spoken Indian English: has or have with a finished time. Learn this one rule today and you will hear it everywhere."}),
-    $("div",{class:"card"},[
-      $("h3",{text:"The rule"}),
-      $("p",{},["If the time is ",$("span",{class:"mark",text:"finished"})," (yesterday, last year, in 1949, on Monday, two days ago), use the simple past: ",$("b",{text:"I did, she wrote, they adopted"}),"."]),
-      $("p",{},["If the time ",$("span",{class:"mark",text:"reaches today"})," (since, for, ever, never, already, yet, this year, so far), use has or have: ",$("b",{text:"I have done, she has written"}),"."]),
-      $("div",{class:"tablebox"},$("table",{},[
-        $("tr",{},[$("th",{text:"Finished time → past"}),$("th",{text:"Time up to now → has/have"})]),
-        $("tr",{},[$("td",{text:"yesterday, last week"}),$("td",{text:"since 2020, for two years"})]),
-        $("tr",{},[$("td",{text:"in 1949, on Monday"}),$("td",{text:"ever, never, so far"})]),
-        $("tr",{},[$("td",{text:"two days ago, when I was 10"}),$("td",{text:"already, yet, this week"})])
-      ]))
-    ]),
-    $("div",{class:"card"},[
-      $("h3",{text:"Examples from your topic"}),
-      ...(isC ? [
-        ex("The Constitution came into force in 1950.","The Constitution has come into force in 1950.","1950 is finished, so use the past."),
-        ex("India has amended its Constitution many times since 1951.",null,"Since 1951 reaches today, so use has amended."),
-        ex("I read the Preamble yesterday.","I have read the Preamble yesterday.","Yesterday is finished. Never use has or have with yesterday."),
-        ex("Have you ever read Article 32?",null,"Ever means at any time up to now.")
-      ] : [
-        ex("I finished the circuit last night.","I have finished the circuit last night.","Last night is finished, so use the past."),
-        ex("I have worked with ESP32 boards for two years.",null,"For two years reaches today, so use have worked."),
-        ex("The test failed on Monday.","The test has failed on Monday.","On Monday is finished."),
-        ex("Have you ever designed a PCB?",null,"Ever means at any time up to now.")
-      ])
-    ]),
-    $("div",{class:"card"},[
-      $("h3",{text:"Fix your speaking mistakes"}),
-      $("p",{text:"Play your recording back together. Every time has or have sits next to a finished time, stop and say the sentence again correctly. Then fix any other mistakes your partner noted."}),
-      countdown(300,"Start 5 min")
-    ]),
-    $("div",{class:"row"},[$("button",{class:"btn ghost",on:{click:()=>go(2)}},"Back"), $("button",{class:"btn",on:{click:()=>go(4)}},"Next: 15 questions")])
-  ]);
-}
-
-/* ---------- 5. Practice ---------- */
-function score(){ let n=0; SETS[S.set].forEach((q,i)=>{ const a=S.ans[i]; if(a && a.ok===true) n++; }); return n; }
-function viewPractice(){
-  const set = SETS[S.set]; const i = S.qi; const q = set[i]; const a = S.ans[i];
-  const dots = $("div",{class:"dots","aria-label":"Progress"});
-  set.forEach((_,k)=>{ const r=S.ans[k]; dots.append($("i",{class:[r? (r.ok===true?"ok":(r.ok===false?"no":"")) : "", k===i?"cur":""].join(" "), title:"Question "+(k+1)})); });
-  const card = $("div",{class:"card"});
-  card.append($("div",{class:"kind"},[$("span",{text:(i+1)+" of "+set.length+" · "+q.kind}), $("span",{text:score()+" right"})]));
-  const fbBox = $("div");
-  const showFb = () => {
-    fbBox.replaceChildren();
-    const r = S.ans[i]; if(!r) return;
-    if(q.t==="write"){ fbBox.append(writeFeedback(r.given, q)); return; }
-    const right = q.t==="mcq"? q.o[q.a] : q.t==="error"? (q.parts[q.a]+" → "+q.fix) : q.t==="order"? q.words.join(" ") : q.acc[0];
-    fbBox.append($("div",{class:"fb "+(r.ok?"ok":"no")},[$("b",{text:r.ok?"Correct":"Not quite"}), r.ok?null:$("p",{text:"Answer: "+right}), $("p",{text:q.why})]));
-  };
-  const commit = (given, ok) => { S.ans[i]={given, ok}; persist(); render(); };
-
-  if(q.t!=="order" && q.t!=="error") card.append($("p",{class:"q",text:q.q}));
-  if(q.t==="mcq"){
-    const box=$("div",{class:"opts"});
-    q.o.forEach((o,k)=>{ const cls = a ? (k===q.a?"opt right":(a.given===o?"opt wrong":"opt")) : "opt";
-      box.append($("button",{class:cls, disabled:!!a, on:{click:()=>commit(o, k===q.a)}},o)); });
-    card.append(box);
-  } else if(q.t==="fill"){
-    const inp=$("input",{type:"text",id:"fill"+i,autocomplete:"off",autocapitalize:"none",spellcheck:"false",placeholder:"Type your answer"});
-    if(a){ inp.value=a.given; inp.disabled=true; }
-    const chk=$("button",{class:"btn",disabled:!!a,on:{click:()=>{ if(!inp.value.trim()) return; commit(inp.value.trim(), q.acc.includes(norm(inp.value))); }}},"Check");
-    inp.addEventListener("keydown",e=>{ if(e.key==="Enter") chk.click(); });
-    card.append(inp); if(!a) card.append($("div",{},chk));
-  } else if(q.t==="error"){
-    card.append($("p",{class:"q",text:q.q}));
-    const box=$("div",{class:"parts"});
-    q.parts.forEach((p,k)=>{ const cls = a ? (k===q.a?"chip right":(a.given===p?"chip wrong":"chip")) : "chip";
-      box.append($("button",{class:cls,disabled:!!a,on:{click:()=>commit(p,k===q.a)}},p)); });
-    card.append(box);
-  } else if(q.t==="order"){
-    card.append($("p",{class:"q",text:"Put the words in the right order."}));
-    const picked = a ? a.given.split(" | ") : (S._order && S._order.i===i ? S._order.p : []);
-    const tray=$("div",{class:"tray"}); const pool=$("div",{class:"parts"});
-    const shuffled = q.words.map((w,k)=>({w,k})).sort((x,y)=>((x.k*7+3)%q.words.length)-((y.k*7+3)%q.words.length));
-    const chk=$("button",{class:"btn",on:{click:()=>commit(picked.join(" | "), picked.join(" ")===q.words.join(" "))}},"Check");
-    const draw=()=>{
-      tray.replaceChildren(); pool.replaceChildren();
-      picked.forEach((w,k)=>tray.append($("button",{class:"chip",disabled:!!a,"aria-pressed":"true",on:{click:()=>{picked.splice(k,1); S._order={i,p:picked}; draw();}}},w)));
-      shuffled.forEach(({w})=>{ if(!picked.includes(w)) pool.append($("button",{class:"chip",disabled:!!a,on:{click:()=>{picked.push(w); S._order={i,p:picked}; draw();}}},w)); });
-      chk.disabled = !!a || picked.length!==q.words.length;
+/* 6 */ let rec=null;
+function speak(){
+  const clk=$("div",{class:"clock",text:"2:00"});
+  const status=$("p",{class:"center small",text:S.sent?"Recording sent ✓":" "});
+  const go1=next("Next: today's rule",6);
+  const mic=$("button",{class:"mic",on:{click:async()=>{
+    if(rec && rec.state==="recording"){ rec.stop(); return; }
+    let stream; try{ stream=await navigator.mediaDevices.getUserMedia({audio:true}); }catch(e){ status.textContent="Allow the microphone to record."; return; }
+    const mime=["audio/webm","audio/mp4","audio/ogg"].find(m=>window.MediaRecorder&&MediaRecorder.isTypeSupported(m))||"";
+    const chunks=[]; rec=mime?new MediaRecorder(stream,{mimeType:mime}):new MediaRecorder(stream);
+    rec.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); };
+    rec.onstop=async()=>{
+      clear(); stream.getTracks().forEach(t=>t.stop()); mic.classList.remove("on"); mic.textContent="Record again";
+      const type=(rec.mimeType||mime||"audio/webm").split(";")[0];
+      const blob=new Blob(chunks,{type}); const ext={"audio/mp4":"m4a","audio/ogg":"ogg"}[type]||"webm";
+      const path=S.who+"/"+today()+"/"+hm()+"-speaking."+ext;
+      const send=async()=>{ status.textContent="Sending…"; try{ await upload(path,blob,type); S.sent=true; persist(); status.textContent="Recording sent ✓"; }catch(e){ status.replaceChildren("Not sent. ", $("button",{class:"chip",on:{click:send}},"Try again")); } };
+      send();
     };
-    card.append(tray,pool); if(!a) card.append($("div",{},chk)); draw();
-  } else if(q.t==="write"){
-    const ta=$("textarea",{id:"write"+i,placeholder:"Write your two sentences here"});
-    ta.value = a ? a.given : S.writing; ta.disabled=!!a;
-    ta.addEventListener("input",()=>{S.writing=ta.value; persist();});
-    const chk=$("button",{class:"btn",disabled:!!a,on:{click:()=>{ if(ta.value.trim().length<8) return; S.writing=ta.value; commit(ta.value.trim(), null); }}},"Check my sentences");
-    card.append(ta); if(!a) card.append($("div",{},chk));
-  }
-  card.append(fbBox); showFb();
+    rec.start(); mic.classList.add("on"); mic.textContent="Stop";
+    let left=120; clk.textContent=fmt(left);
+    timers.push(setInterval(()=>{ left--; clk.textContent=fmt(Math.max(0,left)); if(left<=0 && rec.state==="recording") rec.stop(); },1000));
+  }}}, S.sent?"Record again":"Record");
+  return [$("h2",{text:"Speak"}), $("p",{class:"topic",text:S.topic}), clk, mic, status, go1]; }
 
-  const last = i===set.length-1;
-  return $("section",{class:"stack"},[
-    $("p",{class:"eyebrow",text:topic().name+" · Practice"}),
-    dots, card,
-    $("div",{class:"row"},[
-      $("button",{class:"btn ghost",on:{click:()=>{ if(i===0) go(3); else { S.qi=i-1; persist(); render(); } }}},i===0?"Back":"Previous"),
-      $("button",{class:"btn",disabled:!a,on:{click:()=>{ if(last) go(5); else { S.qi=i+1; persist(); render(); window.scrollTo({top:0}); } }}}, last?"Next: send":"Next question")
-    ])
-  ]);
-}
-function writeFeedback(text, q){
-  const sents = text.split(/(?<=[.!?])\s+/).map(s=>s.trim()).filter(Boolean);
-  const pp = /\b(has|have|'ve|'s)\s+(\w+ed|been|done|made|built|learnt|written|seen|taken|given|become|got|gotten|gone|held|read|won|begun|grown|known|shown|chosen|spoken|brought|bought|taught|thought|found|kept|left|lost|met|paid|put|run|said|sent|set|spent|stood|told|understood)\b/i;
-  const finished = /\b(yesterday|last\s+\w+|ago|in\s+(?:[a-z]+\s+)?(?:1[89]|20)\d\d|on\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday|\d))\b/i;
-  const past = /\b(\w+ed|was|were|did|went|came|made|built|wrote|began|took|gave|got|saw|read|met|held|won|became|found|left|sent|told|said|thought|bought|taught)\b/i;
-  const checks = [];
-  checks.push([sents.length>=2, sents.length>=2 ? "Two sentences." : "Write two full sentences, each ending with a full stop."]);
-  const hasPP = sents.some(s=>pp.test(s));
-  checks.push([hasPP, hasPP ? "You used has/have + past participle." : "One sentence needs has/have + past participle (has held, have built)."]);
-  const clash = sents.find(s=>pp.test(s) && finished.test(s));
-  checks.push([!clash, clash ? "Has/have is used with a finished time here: “"+clash+"”. Change it to the simple past." : "No has/have next to a finished time."]);
-  const pastFixed = sents.some(s=>!pp.test(s) && past.test(s) && finished.test(s));
-  checks.push([pastFixed, pastFixed ? "You used the simple past with a finished time." : "Add a sentence in the simple past with a finished time (yesterday, last Sunday, in 1951)."]);
-  checks.push([/^[A-Z]/.test(text.trim()), /^[A-Z]/.test(text.trim()) ? "Starts with a capital letter." : "Start with a capital letter."]);
-  const box = $("div",{class:"fb info"},[$("b",{text:"Quick check"})]);
-  checks.forEach(([ok,msg])=>box.append($("p",{},[$("b",{text:ok?"✓ ":"✗ "}), msg])));
-  box.append($("p",{class:"small",text:"Example: "+q.model}));
-  box.append($("p",{class:"small",text:"This only checks today's rule. Claude reads your full sentences after you send them."}));
-  return box;
-}
+/* 7 */ function concept(){
+  const ex=(yes,no)=>$("div",{class:"ex"},[$("p",{class:"yes",text:"✓ "+yes}), no?$("p",{class:"no",text:no}):null]);
+  const a=S.who==="archita";
+  return [
+    $("h2",{text:"I have done or I did?"}),
+    $("div",{class:"rule"},[$("p",{},[$("b",{text:"Finished time → past. "}),"yesterday, last year, in 1949, ago"])]),
+    $("div",{class:"rule"},[$("p",{},[$("b",{text:"Time up to now → has / have. "}),"since, for, ever, already, this year"])]),
+    ...(a?[ex("The Constitution came into force in 1950.","The Constitution has come into force in 1950."),
+           ex("India has amended it many times since 1951."),
+           ex("I read the Preamble yesterday.","I have read the Preamble yesterday.")]
+         :[ex("I finished the circuit last night.","I have finished the circuit last night."),
+           ex("I have worked with ESP32 boards for two years."),
+           ex("The test failed on Monday.","The test has failed on Monday.")]),
+    next("Next: 15 questions",7)]; }
 
-/* ---------- 6. Send ---------- */
-function result(){
-  const set=SETS[S.set];
-  return {app:"tme", v:1, day:DAY, set:S.set, date:new Date().toLocaleDateString("en-CA"),
-    self:S.self, selfTotal:S.self.reduce((x,y)=>x+y,0), selfNote:S.selfNote,
-    score:score(), of:set.length-1,
-    ans:set.map((q,i)=>{ const a=S.ans[i]; return a ? [a.given, a.ok===true?1:(a.ok===false?0:null)] : null; }),
-    writing:(S.ans[set.length-1]||{}).given || S.writing || "",
-    rec:S.rec, note:S.note};
-}
-function message(){ const r=result(); return "English Day "+r.day+" · "+topic().name+" · practice "+r.score+"/"+r.of+" · self-check "+r.selfTotal+"/50\n"+JSON.stringify(r); }
-function viewSend(){
-  const set=SETS[S.set]; const done=Object.keys(S.ans).length;
-  const note=$("textarea",{id:"sessnote",placeholder:"Optional: how did speaking go? Which mistakes did you catch?"});
-  note.value=S.note; note.addEventListener("input",()=>{S.note=note.value; persist(); pre.textContent=message();});
-  const pre=$("pre",{text:message()});
-  const status=$("div");
-  const ok=(t)=>{ S.sent=true; persist(); addHistory({day:DAY,set:S.set,date:result().date,score:score(),of:set.length-1,self:result().selfTotal}); status.replaceChildren($("div",{class:"fb ok"},[$("b",{text:t}),$("p",{text:"Saved on this phone too. Paste it into the Claude chat on Telegram so it reaches the laptop."})])); };
-  const send=$("button",{class:"btn",on:{click:async()=>{
-    const text=message();
-    try{ if(navigator.share){ await navigator.share({text}); ok("Shared"); return; } }catch(e){ if(e&&e.name==="AbortError") return; }
-    try{ await navigator.clipboard.writeText(text); ok("Copied. Now paste it in Telegram or WhatsApp"); }
-    catch(e){ const r=document.createRange(); r.selectNodeContents(pre); const s=getSelection(); s.removeAllRanges(); s.addRange(r); status.replaceChildren($("div",{class:"fb info"},[$("b",{text:"Text selected"}),$("p",{text:"Copy it and paste it in Telegram or WhatsApp."})])); }
-  }}},"Send result");
-  const copy=$("button",{class:"btn ghost",on:{click:async()=>{ try{ await navigator.clipboard.writeText(message()); ok("Copied"); }catch(e){} }}},"Copy");
-  const file=$("button",{class:"btn ghost",on:{click:()=>{ saveFile(new Blob([JSON.stringify(result(),null,2)],{type:"application/json"}), "day"+DAY+"-"+S.set+".json"); ok("Saved as a file"); }}},"Save as file");
-  return $("section",{class:"stack"},[
-    $("p",{class:"eyebrow",text:topic().name+" · Day "+DAY}),
-    $("h2",{text:"Send today's result"}),
-    $("div",{class:"card"},[
-      $("div",{class:"row"},[ $("div",{},[$("p",{class:"eyebrow",text:"Practice"}),$("p",{class:"big",text:score()+"/"+(set.length-1)})]),
-        $("div",{},[$("p",{class:"eyebrow",text:"Self-check"}),$("p",{class:"big",text:S.self.reduce((x,y)=>x+y,0)+"/50"})]) ]),
-      $("p",{class:"small",text: done<set.length ? (set.length-done)+" question(s) not answered yet. You can still send." : "All 15 answered. The writing question goes to Claude, so it isn't in the score."}),
-      $("p",{class:"small",text: S.rec ? "Recording: "+S.rec+" (send the audio file separately)." : "No recording made on this page."})
-    ]),
-    $("div",{class:"card"},[$("h3",{text:"A note for next time"}), note]),
-    $("div",{class:"row"},[$("button",{class:"btn ghost",on:{click:()=>{S.qi=set.length-1; go(4);}}},"Back"), send]),
-    status,
-    $("div",{class:"card"},[$("div",{class:"row"},[$("h3",{text:"What gets sent"}), $("div",{class:"row"},[copy,file])]), pre]),
-    $("div",{class:"row"},[$("button",{class:"btn ghost",on:{click:()=>{ try{localStorage.removeItem(KEY);}catch(e){} S=blank(); render(); }}},"Start again")]),
-    historyCard()
-  ]);
-}
+/* 8 */ function score(){ let n=0; SETS[SETFOR[S.who]].forEach((q,i)=>{ if(S.ans[i]&&S.ans[i].ok===true) n++; }); return n; }
+function practice(){
+  const set=SETS[SETFOR[S.who]], i=S.qi, q=set[i], a=S.ans[i];
+  const out=[$("div",{class:"kind"},[$("span",{text:(i+1)+" / "+set.length}),$("span",{text:q.kind})])];
+  const commit=(given,ok)=>{ S.ans[i]={given,ok}; persist(); render(); };
+  if(q.t!=="order") out.push($("p",{class:"q",text:q.q}));
+  if(q.t==="mcq"){ const b=$("div",{class:"opts"}); q.o.forEach((o,k)=>b.append($("button",{class:"opt"+(a?(k===q.a?" right":(a.given===o?" wrong":"")):""),disabled:!!a,on:{click:()=>commit(o,k===q.a)}},o))); out.push(b); }
+  else if(q.t==="error"){ const b=$("div",{class:"parts"}); q.parts.forEach((p,k)=>b.append($("button",{class:"chip"+(a?(k===q.a?" right":(a.given===p?" wrong":"")):""),disabled:!!a,on:{click:()=>commit(p,k===q.a)}},p))); out.push(b); }
+  else if(q.t==="fill"){ const inp=$("input",{type:"text",id:"f"+i,autocomplete:"off",autocapitalize:"none",spellcheck:"false",placeholder:"Your answer"}); if(a){inp.value=a.given; inp.disabled=true;}
+    const chk=$("button",{class:"btn line",on:{click:()=>{ if(inp.value.trim()) commit(inp.value.trim(), q.acc.includes(norm(inp.value))); }}},"Check");
+    inp.addEventListener("keydown",e=>{ if(e.key==="Enter") chk.click(); }); out.push(inp); if(!a) out.push(chk); }
+  else if(q.t==="order"){ out.push($("p",{class:"q",text:"Put the words in order."}));
+    const picked=a?a.given.split(" | "):[]; const tray=$("div",{class:"tray"}), pool=$("div",{class:"parts"});
+    const sh=q.words.map((w,k)=>({w,k})).sort((x,y)=>((x.k*7+3)%q.words.length)-((y.k*7+3)%q.words.length));
+    const chk=$("button",{class:"btn line",on:{click:()=>commit(picked.join(" | "),picked.join(" ")===q.words.join(" "))}},"Check");
+    const draw=()=>{ tray.replaceChildren(); pool.replaceChildren();
+      picked.forEach((w,k)=>tray.append($("button",{class:"chip",disabled:!!a,on:{click:()=>{picked.splice(k,1);draw();}}},w)));
+      sh.forEach(({w})=>{ if(!picked.includes(w)) pool.append($("button",{class:"chip",disabled:!!a,on:{click:()=>{picked.push(w);draw();}}},w)); });
+      chk.disabled=!!a||picked.length!==q.words.length; };
+    draw(); out.push(tray,pool); if(!a) out.push(chk); }
+  else if(q.t==="write"){ const ta=$("textarea",{id:"w"+i,placeholder:"Two sentences"}); ta.value=a?a.given:S.writing; ta.disabled=!!a; ta.addEventListener("input",()=>{S.writing=ta.value;persist();});
+    out.push(ta); if(!a) out.push($("button",{class:"btn line",on:{click:()=>{ if(ta.value.trim().length>7) commit(ta.value.trim(),null); }}},"Done")); }
+  if(a){ const right=q.t==="mcq"?q.o[q.a]:q.t==="error"?q.fix:q.t==="order"?q.words.join(" "):q.t==="fill"?q.acc[0]:q.model;
+    out.push($("div",{class:"fb"},[ q.t==="write"?$("b",{text:"Example"}):$("b",{class:a.ok?"ok":"no",text:a.ok?"Correct":"Answer: "+right}),
+      q.t==="write"?$("p",{text:q.model}):null, $("p",{class:"small",text:q.why})])); }
+  const last=i===set.length-1;
+  out.push($("button",{class:"btn",disabled:!a,on:{click:()=>{ if(last) go(8); else { S.qi=i+1; persist(); render(); scrollTo({top:0}); } }}},last?"Finish":"Next"));
+  return out; }
 
-/* ---------- History (this phone) ---------- */
-function historyCard(){
-  const h=history(); const list=$("div",{class:"hist"});
-  if(!h.length) list.append($("p",{class:"small",text:"Nothing sent from this phone yet. Day 1 will be the first row."}));
-  h.forEach(r=>list.append($("div",{},[$("span",{text:"Day "+r.day+" · "+(TOPICS[r.set]?TOPICS[r.set].name:r.set)+" · "+r.date}), $("span",{text:"practice "+r.score+"/"+r.of+" · self "+r.self+"/50"})])));
-  return $("div",{class:"card"},[$("h3",{text:"This week on this phone"}), list]);
-}
+/* end */ function done(){
+  const set=SETS[SETFOR[S.who]];
+  const status=$("p",{class:"center small",text:"Sending…"});
+  const result={who:S.who,date:today(),topic:S.topic,concept:"present perfect vs simple past",set:SETFOR[S.who],
+    score:score(),of:set.length-1,ans:set.map((q,i)=>S.ans[i]?[S.ans[i].given,S.ans[i].ok===true?1:(S.ans[i].ok===false?0:null)]:null),
+    writing:(S.ans[set.length-1]||{}).given||"",recordingSent:S.sent};
+  const send=async()=>{ status.textContent="Sending…"; try{ await upload(S.who+"/"+today()+"/"+hm()+"-result.json", new Blob([JSON.stringify(result,null,2)],{type:"application/json"}),"application/json"); status.textContent="Saved ✓"; }catch(e){ status.replaceChildren("Not saved. ",$("button",{class:"chip",on:{click:send}},"Try again")); } };
+  if(S.saved) status.textContent="Saved ✓"; else { S.saved=true; persist(); send(); }
+  return [$("h2",{text:"Done"}), $("div",{class:"clock",text:score()+"/"+(set.length-1)}), status,
+    $("button",{class:"btn line",on:{click:()=>{ S={step:1,who:null,topic:null,qi:0,ans:{},writing:"",sent:false,saved:false,stamp:today()}; persist(); render(); }}},"Next person")]; }
 
-restore(); render();
+render();
 </script>
 </body>
 </html>

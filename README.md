@@ -1,5 +1,5 @@
 # Twenty Minute English
 
-A daily 20-minute spoken-English session for two: pick a topic, self-check, read 3 minutes, speak 2 minutes (recorded), learn one grammar rule, answer 15 questions with instant feedback, send the result as JSON.
+A daily 20-minute spoken-English session for two: welcome, pick your name, spin a topic wheel, read 3 minutes, record 2 minutes of speaking, learn one rule, answer 15 questions with instant feedback.
 
-One static page (`index.html`), served by GitHub Pages. Nothing is stored on a server: drafts and history stay in the browser, the result leaves only when the user presses Send.
+One static page (`index.html`) on GitHub Pages. Recordings and results upload to a private Supabase Storage bucket (insert only, with the project's publishable key); a laptop step moves them to Drive.
