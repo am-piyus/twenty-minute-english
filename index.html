@@ -68,6 +68,12 @@ textarea{min-height:120px;resize:vertical}
 .fb{display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-radius:12px;background:var(--soft)}
 .fb b.ok{color:var(--good)} .fb b.no{color:var(--bad)}
 .center{text-align:center}
+/* Where am I, and the way back or past: one row, on every step. */
+.where{display:flex;justify-content:space-between;align-items:center;font-size:.85rem;color:var(--muted)}
+.nav{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.nav .btn{padding:12px 16px;font-size:.95rem}
+ul.pts{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+ol.plan li.now{font-weight:700;color:var(--accent)}
 </style>
 </head>
 <body>
@@ -75,48 +81,34 @@ textarea{min-height:120px;resize:vertical}
 <main id="app"></main>
 <script>
 const SB_URL='https://tyusfrpcqeholwwfkvzb.supabase.co', SB_KEY='sb_publishable_VHtdUZlWKyQIIBr_pXpqjg_Qs0Z5aPD';
-const SETS = {
+const DAY=2, CONCEPT="asking questions: the helping verb before the subject";
+
+/* Day 1's sets, kept so each person can retry the ones they got wrong. */
+const DAY1 = {
 constitution: [
  {t:"mcq", kind:"Past or present perfect", q:"The Constituent Assembly ___ the Constitution on 26 November 1949.",
   o:["has adopted","adopted","have adopted","adopts"], a:1,
   why:"“On 26 November 1949” is a finished time, so use the simple past: adopted."},
- {t:"fill", kind:"Since or for", q:"India has been a republic ___ 1950.", acc:["since"],
-  why:"Since + a starting point (1950). For + a length of time (for 75 years)."},
- {t:"fill", kind:"Articles", q:"Dr B. R. Ambedkar was ___ chairman of the Drafting Committee.", acc:["the"],
-  why:"There was only one chairman, so it is the chairman."},
- {t:"fill", kind:"Prepositions", q:"Fundamental Rights are given ___ Part III of the Constitution.", acc:["in"],
-  why:"Something is written in a part, chapter or article."},
+ null,null,null,
  {t:"mcq", kind:"Subject–verb agreement", q:"The list of Fundamental Duties ___ in Article 51A.",
   o:["are given","is given","were giving","be given"], a:1,
   why:"The subject is “the list” (one list), not “duties”. One list is given."},
- {t:"error", kind:"Spot the error", q:"Tap the part that is wrong.",
-  parts:["Parliament","have passed","more than","a hundred amendments."], a:1, fix:"has passed",
-  why:"Parliament is one body, so it takes has: Parliament has passed."},
+ null,
  {t:"fill", kind:"Correct the sentence", q:"Rewrite it correctly: “She don't know the difference between rights and duties.”",
   acc:["she doesn't know the difference between rights and duties","she does not know the difference between rights and duties"],
-  why:"She, he and it take does: She doesn't know…"},
- {t:"mcq", kind:"Active to passive", q:"Active: “The President appoints the Chief Justice of India.” Which passive is correct?",
-  o:["The Chief Justice of India was appointed by the President.","The Chief Justice of India is appointed by the President.","The Chief Justice of India has appointed the President.","The Chief Justice of India is appoint by the President."], a:1,
-  why:"Keep the tense: appoints (present) becomes is appointed."},
+  why:"She takes does, and one not is enough: She doesn't know… (not “doesn't not”)."},
+ null,
  {t:"mcq", kind:"Reported speech", q:"She said, “I am reading Article 21.” Report it.",
   o:["She said that she is reading Article 21.","She said that I was reading Article 21.","She said that she was reading Article 21.","She said that she has read Article 21."], a:2,
   why:"After “said”, am reading moves back to was reading, and I becomes she."},
- {t:"order", kind:"Word order", words:["Article 21","protects","the right","to life","and personal liberty"],
-  why:"Subject, then verb, then object: Article 21 protects the right to life and personal liberty."},
+ null,
  {t:"mcq", kind:"Making questions", q:"Which question is correct?",
   o:["When the Constitution was adopted?","When did the Constitution adopted?","When was the Constitution adopted?","When was adopted the Constitution?"], a:2,
   why:"In a question, the helping verb comes before the subject: When was the Constitution adopted?"},
  {t:"fill", kind:"Conditionals", q:"If citizens ___ (know) their rights, they would protect them better.", acc:["knew"],
   why:"If + past, would + verb. This is an imagined situation: If citizens knew…"},
  {t:"fill", kind:"Comparing", q:"India has ___ (long) written constitution in the world.", acc:["the longest"],
-  why:"Comparing with everything else in the world: the + -est. The longest."},
- {t:"mcq", kind:"Word choice", q:"The Constitution came into ___ on 26 January 1950.",
-  o:["force","power","work","strength"], a:0,
-  why:"A law comes into force. That is the fixed phrase."},
- {t:"write", kind:"Write it yourself",
-  q:"Write 2 sentences. One about something that has continued since 1950, using has or have. One about something that happened on a fixed date, using the simple past.",
-  model:"India has held many general elections since 1950. The first general election began in October 1951.",
-  why:"Use has/have + past participle for a period that reaches today, and the simple past for a finished date."}
+  why:"You had longest. It needs the: the longest. Superlatives always take the."}
 ],
 engineering: [
  {t:"mcq", kind:"Past or present perfect", q:"I ___ my first PCB design last year.",
@@ -126,61 +118,202 @@ engineering: [
   why:"For + a length of time (three hours). Since + a starting point (since 10 a.m.)."},
  {t:"fill", kind:"Articles", q:"An engineer needs ___ oscilloscope to see the signal.", acc:["an"],
   why:"Oscilloscope starts with a vowel sound, so it is an oscilloscope."},
- {t:"fill", kind:"Prepositions", q:"The sensor is connected ___ the microcontroller.", acc:["to"],
-  why:"One thing is connected to another."},
+ null,
  {t:"mcq", kind:"Subject–verb agreement", q:"Each of the resistors ___ a different value.",
   o:["have","has","are having","having"], a:1,
   why:"“Each” means one at a time, so it takes has."},
- {t:"error", kind:"Spot the error", q:"Tap the part that is wrong.",
-  parts:["The readings","from the sensor","are sended","to the laptop."], a:2, fix:"are sent",
-  why:"Send is irregular: send, sent, sent. There is no word “sended”."},
- {t:"fill", kind:"Correct the sentence", q:"Rewrite it correctly: “He have finished the code yesterday.”",
-  acc:["he finished the code yesterday"],
-  why:"“Yesterday” is a finished time, so use the simple past. Present perfect never goes with yesterday."},
- {t:"mcq", kind:"Active to passive", q:"Active: “Engineers designed this bridge in 1998.” Which passive is correct?",
-  o:["This bridge is designed by engineers in 1998.","This bridge has been designed by engineers in 1998.","This bridge was designed by engineers in 1998.","This bridge was design by engineers in 1998."], a:2,
-  why:"Keep the tense: designed (past) becomes was designed."},
+ null,null,null,
  {t:"mcq", kind:"Reported speech", q:"He said, “I am fixing the bug.” Report it.",
   o:["He said that he is fixing the bug.","He said that I was fixing the bug.","He said that he was fixing the bug.","He said that he has fixed the bug."], a:2,
   why:"After “said”, am fixing moves back to was fixing, and I becomes he."},
- {t:"order", kind:"Word order", words:["The motor","stopped","because","the battery","was","empty"],
-  why:"Main clause first, then the reason: The motor stopped because the battery was empty."},
+ null,
  {t:"mcq", kind:"Making questions", q:"Which question is correct?",
   o:["How this sensor works?","How does this sensor works?","How does this sensor work?","How is this sensor work?"], a:2,
   why:"Does carries the -s, so the main verb stays plain: How does this sensor work?"},
- {t:"fill", kind:"Conditionals", q:"If you increase the voltage, the current ___ (increase).", acc:["increases","will increase"],
-  why:"A fact that is always true: If + present, present. The current increases."},
+ null,
  {t:"fill", kind:"Comparing", q:"Copper is one of ___ (good) conductors of electricity.", acc:["the best"],
   why:"Good, better, the best. “One of the …” always takes the superlative."},
  {t:"mcq", kind:"Word choice", q:"Please ___ the experiment again and note the readings.",
   o:["carry out","make","take","give"], a:0,
-  why:"You carry out (or do) an experiment. You don't make one."},
- {t:"write", kind:"Write it yourself",
-  q:"Write 2 sentences. One about something you have built or learned this year, using has or have. One about something you did on a fixed day, using the simple past.",
-  model:"I have built a voice note app this year. Last Sunday I tested it on my phone.",
-  why:"Use has/have + past participle for a period that reaches today, and the simple past for a finished day."}
+  why:"You carry out (or do) an experiment. You don't make one."}
 ]};
-const SETFOR = {archita:"constitution", piyus:"engineering"};
-const NAMES = {piyus:"Piyus", archita:"Archita"};
-const TOPICS = ["The Constitution","Engineering","Technology","Environment","Education","Health","Sports","Films","Food","Travel","Social media","My hometown"];
-const STEPS = 9;
+const REVIEW = {archita:DAY1.constitution.filter(Boolean), piyus:DAY1.engineering.filter(Boolean)};
 
-let S = {step:0, who:null, topic:null, qi:0, ans:{}, writing:"", sent:false, stamp:null};
-const KEY="tme2";
+/* Day 2: the wheel's topic drives the reading points, the speaking prompts and the questions.
+   Each topic: 5 on today's rule (questions), 3 revising Day 1's rule (past or has/have), 1 to write. */
+const Q=(kind,q,o,a,why)=>({t:"mcq",kind,q,o,a,why});
+const F=(kind,q,acc,why)=>({t:"fill",kind,q,acc,why});
+const E=(parts,a,fix,why)=>({t:"error",kind:"Spot the error",q:"Tap the part that is wrong.",parts,a,fix,why});
+const O=(words,why)=>({t:"order",kind:"Word order",words,why});
+const WHICH="Which question is correct?", HV="Helping verb", PP="Past or has/have";
+const T = {
+"The Constitution":{read:["When was it adopted, and when did it come into force?","One Fundamental Right that matters to you, and why.","One duty every citizen has."],
+ speak:["What does the Constitution do for an ordinary person?","Which right have you used this week?"],
+ qs:[Q("Making questions",WHICH,["Why the Constitution is important?","Why is the Constitution important?","Why is important the Constitution?","Why the Constitution important is?"],1,"Is comes before the subject: Why is the Constitution important?"),
+  O(["How many","Fundamental Rights","does","the Constitution","give?"],"Question word, then does, then the subject, then the plain verb."),
+  E(["When","did the Assembly","adopted","the Constitution?"],2,"adopt","Did already carries the past, so the verb stays plain: When did the Assembly adopt…?"),
+  F(HV,"___ India become a republic in 1950?",["did"],"A finished past event: Did + subject + plain verb."),
+  F(HV,"How ___ the Preamble begin?",["does"],"A present fact about one thing (the Preamble): does, and begin stays plain."),
+  Q(PP,"India ___ the Constitution more than 100 times since 1951.",["amended","has amended","have amended","amends"],1,"Since 1951 reaches today, and India is one country: has amended."),
+  F(PP,"Dr Ambedkar ___ (present) the final draft in November 1949.",["presented"],"In November 1949 is finished: simple past, presented."),
+  E(["I","have read","the Preamble","yesterday."],1,"read","Yesterday is finished, so: I read the Preamble yesterday.")],
+ w:"Do you know your Fundamental Duties? When did India become a republic?"},
+"Engineering":{read:["What does an engineer actually do in a day?","One thing around you that an engineer designed.","Which branch interests you, and why?"],
+ speak:["Describe a device you use every day and how it works.","What have you built or fixed yourself?"],
+ qs:[Q("Making questions",WHICH,["What this circuit does?","What does this circuit do?","What does this circuit does?","What is this circuit do?"],1,"Does carries the -s, so do stays plain: What does this circuit do?"),
+  O(["Why","did","the motor","stop?"],"Question word, then did, then the subject, then the plain verb."),
+  E(["How long","does","the battery","lasts?"],3,"last?","Does carries the -s, so: How long does the battery last?"),
+  F(HV,"___ you tested the code yet?",["have"],"Yet means up to now: Have you tested…?"),
+  F(HV,"Where ___ you buy this sensor last week?",["did"],"Last week is finished: did + plain verb."),
+  Q(PP,"We ___ this board two days ago.",["have tested","tested","has tested","test"],1,"Two days ago is finished: tested."),
+  F(PP,"She ___ (work) at this company since 2022.",["has worked","has been working"],"Since 2022 reaches today: has worked."),
+  E(["The team","has finished","the project","last month."],1,"finished","Last month is finished: The team finished the project last month.")],
+ w:"How does this motor work? When did you start the project?"},
+"Technology":{read:["Which piece of technology do you use most, and for what?","How has it changed your parents' lives?","One thing technology makes worse."],
+ speak:["Could you live a week without your phone? Why?","What new technology have you tried this year?"],
+ qs:[Q("Making questions",WHICH,["How you use this app?","How do you use this app?","How do you uses this app?","How are you use this app?"],1,"Do comes before the subject, the verb stays plain: How do you use this app?"),
+  O(["When","did","you","buy","your phone?"],"Question word, then did, then the subject, then the plain verb."),
+  E(["What","you are","watching","on YouTube?"],1,"are you","The helping verb goes before the subject: What are you watching?"),
+  F(HV,"___ your phone have a good camera?",["does"],"Your phone is one thing: Does it have…? (have stays plain)"),
+  F(HV,"___ you ever used a laptop for coding?",["have"],"Ever means up to now: Have you ever used…?"),
+  Q(PP,"I ___ my first smartphone in 2018.",["have got","got","have get","get"],1,"In 2018 is finished: got."),
+  F(PP,"Smartphones ___ (change) the way we talk since 2010.",["have changed"],"Since 2010 reaches today, and smartphones is plural: have changed."),
+  E(["My brother","has bought","a new laptop","two weeks ago."],1,"bought","Two weeks ago is finished: My brother bought…")],
+ w:"Do you use a laptop every day? When did you get your first phone?"},
+"Environment":{read:["The biggest environmental problem in your town.","What did you throw away today?","One small thing a person can do every day."],
+ speak:["How has the weather where you live changed?","What should the government do about plastic?"],
+ qs:[Q("Making questions",WHICH,["Why the rivers are dirty?","Why are the rivers dirty?","Why are dirty the rivers?","Why do the rivers are dirty?"],1,"Are goes before the subject: Why are the rivers dirty?"),
+  O(["How much","plastic","do","we","use?"],"Question words, then do, then the subject, then the plain verb."),
+  E(["Did","the factory","closed","last year?"],2,"close","Did carries the past: Did the factory close?"),
+  F(HV,"___ it rain a lot in your village in July?",["does"],"A regular fact about it: Does it rain…?"),
+  F(HV,"What ___ people doing to save water these days?",["are"],"Doing is -ing, and people is plural: What are people doing?"),
+  Q(PP,"We ___ fifty trees in our college since June.",["planted","have planted","has planted","plant"],1,"Since June reaches today: have planted."),
+  F(PP,"The flood ___ (destroy) many houses in 2023.",["destroyed"],"In 2023 is finished: destroyed."),
+  E(["The air","has become","very bad","last winter."],1,"became","Last winter is finished: The air became very bad.")],
+ w:"Do you use plastic bags? When did it last rain in your town?"},
+"Education":{read:["One thing school taught you well.","One thing it never taught you.","Exams or projects: which shows more?"],
+ speak:["Describe your best teacher.","What have you learned outside the classroom?"],
+ qs:[Q("Making questions",WHICH,["Which subject you like most?","Which subject do you like most?","Which subject does you like most?","Which subject you do like most?"],1,"Do goes before the subject: Which subject do you like most?"),
+  O(["Where","did","you","study","for your degree?"],"Question word, then did, then the subject, then the plain verb."),
+  E(["Does","your college","has","a library?"],2,"have","Does carries the -s, so has becomes have: Does your college have a library?"),
+  F(HV,"___ you finished your assignment yet?",["have"],"Yet means up to now: Have you finished…?"),
+  F(HV,"Why ___ you choose this course three years ago?",["did"],"Three years ago is finished: did + plain verb."),
+  Q(PP,"I ___ my 12th exams in 2021.",["have passed","passed","have pass","pass"],1,"In 2021 is finished: passed."),
+  F(PP,"He ___ (teach) at this school for twenty years.",["has taught","has been teaching"],"For twenty years, still true today: has taught."),
+  E(["We","have had","a test","on Monday."],1,"had","On Monday is finished: We had a test on Monday.")],
+ w:"Do you like your classes? Which school did you go to?"},
+"Health":{read:["What did you eat, and how did you sleep last night?","One healthy habit you have, and one you want.","Why do people skip exercise?"],
+ speak:["What do you do when you feel stressed?","How has your health changed since school?"],
+ qs:[Q("Making questions",WHICH,["How many hours you sleep?","How many hours do you sleep?","How many hours does you sleep?","How many hours are you sleep?"],1,"Do goes before the subject: How many hours do you sleep?"),
+  O(["Why","is","sleep","important?"],"Question word, then is, then the subject."),
+  E(["When","you did","see","the doctor?"],1,"did you","The helping verb goes before the subject: When did you see the doctor?"),
+  F(HV,"___ you go for a walk yesterday?",["did"],"Yesterday is finished: Did you go…?"),
+  F(HV,"How often ___ your father exercise?",["does"],"Your father is one person: does, and exercise stays plain."),
+  Q(PP,"I ___ sick three times this year.",["was","have been","has been","am"],1,"This year is not over: have been."),
+  F(PP,"I ___ (catch) a cold last week.",["caught"],"Last week is finished: caught."),
+  E(["She","has visited","the hospital","two days ago."],1,"visited","Two days ago is finished: She visited the hospital.")],
+ w:"Do you exercise every day? What did you eat for dinner?"},
+"Sports":{read:["Which sport did you play as a child?","A player you admire, and why.","Should sports be compulsory in college?"],
+ speak:["Describe a match you remember.","What has India done well in sports recently?"],
+ qs:[Q("Making questions",WHICH,["Who you support in cricket?","Who do you support in cricket?","Who does you support in cricket?","Who you do support in cricket?"],1,"Do goes before the subject: Who do you support?"),
+  O(["How often","do","you","play","badminton?"],"Question words, then do, then the subject, then the plain verb."),
+  E(["Did","India","won","the match?"],2,"win","Did carries the past: Did India win the match?"),
+  F(HV,"___ you ever watched a match in a stadium?",["have"],"Ever means up to now: Have you ever watched…?"),
+  F(HV,"What time ___ the match start tomorrow?",["does"],"A timetable fact about one match: does, and start stays plain."),
+  Q(PP,"India ___ the World Cup in 2011.",["has won","won","have won","wins"],1,"In 2011 is finished: won."),
+  F(PP,"She ___ (play) for the state team since 2020.",["has played","has been playing"],"Since 2020 reaches today: has played."),
+  E(["I","have played","cricket","last Sunday."],1,"played","Last Sunday is finished: I played cricket.")],
+ w:"Do you play any sport? Who won the last match you watched?"},
+"Films":{read:["The last film you watched: what was it about?","A film you have watched more than once.","Cinema hall or phone?"],
+ speak:["Tell the story of a film you like, in order.","Which actor have you liked for a long time?"],
+ qs:[Q("Making questions",WHICH,["What film you watched last night?","What film did you watch last night?","What film did you watched last night?","What film you did watch last night?"],1,"Did carries the past, the verb stays plain: What film did you watch?"),
+  O(["Who","is","your","favourite","actor?"],"Question word, then is, then the rest."),
+  E(["Why","does","she","likes horror films?"],3,"like horror films?","Does carries the -s: Why does she like horror films?"),
+  F(HV,"___ you seen the new Odia film?",["have"],"Seen is a past participle, so it needs have: Have you seen…?"),
+  F(HV,"Where ___ they shoot the film last year?",["did"],"Last year is finished: did + plain verb."),
+  Q(PP,"I ___ that film three times.",["watched","have watched","has watched","watch"],1,"Three times, up to now, no finished time: have watched."),
+  F(PP,"We ___ (go) to the cinema last Saturday.",["went"],"Last Saturday is finished: went."),
+  E(["The film","has come out","in 2019."],1,"came out","In 2019 is finished: The film came out in 2019.")],
+ w:"Do you like Odia films? Which film did you watch last?"},
+"Food":{read:["What did you eat today?","A dish from home that someone else should try.","How do you make it?"],
+ speak:["Describe how your favourite dish is made, step by step.","Has your taste in food changed since childhood?"],
+ qs:[Q("Making questions",WHICH,["What you had for breakfast?","What did you have for breakfast?","What did you had for breakfast?","What you did have for breakfast?"],1,"Did carries the past, so have stays plain: What did you have?"),
+  O(["How","do","you","make","dalma?"],"Question word, then do, then the subject, then the plain verb."),
+  E(["Does","your mother","cooks","fish curry?"],2,"cook","Does carries the -s: Does your mother cook fish curry?"),
+  F(HV,"___ you ever tried Chinese food?",["have"],"Ever means up to now: Have you ever tried…?"),
+  F(HV,"What ___ you cooking right now?",["are"],"Right now, with -ing: What are you cooking?"),
+  Q(PP,"I ___ pakhala yesterday.",["have eaten","ate","has eaten","eat"],1,"Yesterday is finished: ate."),
+  F(PP,"I ___ (not eat) anything since morning.",["haven't eaten","have not eaten"],"Since morning reaches now: haven't eaten."),
+  E(["We","have ordered","pizza","last night."],1,"ordered","Last night is finished: We ordered pizza.")],
+ w:"Do you cook at home? What did you eat for lunch?"},
+"Travel":{read:["The last trip you took: where, and with whom?","A place you have always wanted to see.","Train or bus? Why?"],
+ speak:["Describe a journey that went wrong.","Where have you been that surprised you?"],
+ qs:[Q("Making questions",WHICH,["Where you went last summer?","Where did you go last summer?","Where did you went last summer?","Where you did go last summer?"],1,"Did carries the past: Where did you go?"),
+  O(["How long","does","the train","take?"],"Question words, then does, then the subject, then the plain verb."),
+  E(["Have","you","ever","went to Puri?"],3,"been to Puri?","Have needs a past participle. For visits, use been: Have you ever been to Puri?"),
+  F(HV,"How ___ you travel to college every day?",["do"],"Every day, with you: How do you travel…?"),
+  F(HV,"When ___ the bus leave yesterday?",["did"],"Yesterday is finished: did + plain verb."),
+  Q(PP,"I ___ to Delhi twice.",["went","have been","has been","go"],1,"Twice, up to now, no finished time: have been."),
+  F(PP,"We ___ (visit) Konark last December.",["visited"],"Last December is finished: visited."),
+  E(["She","has gone","to Bhubaneswar","last week."],1,"went","Last week is finished: She went to Bhubaneswar.")],
+ w:"Do you like long journeys? Where did you go on your last trip?"},
+"Social media":{read:["Which app do you open first in the morning?","What does it give you, and what does it take?","Would you delete one app? Which?"],
+ speak:["How much time do you spend on your phone, and on what?","What have you learned from social media?"],
+ qs:[Q("Making questions",WHICH,["How much time you spend on Instagram?","How much time do you spend on Instagram?","How much time does you spend on Instagram?","How much time you do spend on Instagram?"],1,"Do goes before the subject: How much time do you spend…?"),
+  O(["Why","do","people","post","every day?"],"Question word, then do, then the subject, then the plain verb."),
+  E(["What","did","you","posted yesterday?"],3,"post yesterday?","Did carries the past: What did you post yesterday?"),
+  F(HV,"___ she on WhatsApp right now?",["is"],"Right now, about one person: Is she…?"),
+  F(HV,"___ you ever met an online friend in person?",["have"],"Ever means up to now: Have you ever met…?"),
+  Q(PP,"I ___ Instagram in 2019.",["have joined","joined","has joined","join"],1,"In 2019 is finished: joined."),
+  F(PP,"He ___ (post) five reels this week.",["has posted"],"This week is not over: has posted."),
+  E(["I","have deleted","Facebook","two years ago."],1,"deleted","Two years ago is finished: I deleted Facebook.")],
+ w:"Do you use Instagram? What did you watch on YouTube yesterday?"},
+"My hometown":{read:["Where is it, and what is it known for?","What has changed there in the last five years?","What do you miss when you are away?"],
+ speak:["Describe your hometown to someone who has never been there.","What would you change about it?"],
+ qs:[Q("Making questions",WHICH,["Where your hometown is?","Where is your hometown?","Where is your hometown is?","Where does your hometown is?"],1,"Is goes before the subject: Where is your hometown?"),
+  O(["What","is","your hometown","famous for?"],"Question word, then is, then the subject."),
+  E(["How long","you have","lived","there?"],1,"have you","The helping verb goes before the subject: How long have you lived there?"),
+  F(HV,"___ your hometown have a railway station?",["does"],"One town: does, and have stays plain."),
+  F(HV,"When ___ you last go home?",["did"],"A finished past event: did + plain verb."),
+  Q(PP,"A new bridge ___ in my town in 2022.",["has opened","opened","have opened","opens"],1,"In 2022 is finished: opened."),
+  F(PP,"My town ___ (grow) a lot since I was a child.",["has grown"],"Since I was a child reaches today: has grown."),
+  E(["My family","has moved","here","in 2010."],1,"moved","In 2010 is finished: My family moved here in 2010.")],
+ w:"Do you miss your hometown? When did you last visit it?"}
+};
+const TOPICS=Object.keys(T);
+const writeQ=topic=>({t:"write",kind:"Write it yourself",q:"Write 2 questions you would ask someone about "+topic.toLowerCase()+": one with do or does, one with did.",model:T[topic].w,why:"Helping verb first, then the subject, then the plain verb."});
+const setFor=topic=>T[topic].qs.concat([writeQ(topic)]);
+const NAMES = {piyus:"Piyus", archita:"Archita"};
+const STEP_NAMES=["Welcome","Your name","Today's plan","Topic wheel","Read","Speak","Fix Day 1","Today's rule","Questions","Done"];
+const STEPS=STEP_NAMES.length;
+
+const fresh=()=>({step:0, who:null, topic:null, qi:0, ri:0, ans:{}, rev:{}, sent:false, saved:false, stamp:null});
+let S=fresh();
+const KEY="tme3";
 const persist=()=>{ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} };
 try{ const v=JSON.parse(localStorage.getItem(KEY)||"null"); if(v && v.stamp===today()) S=Object.assign(S,v); }catch(e){}
 function today(){ return new Date().toLocaleDateString("en-CA"); }
+const lastTopic=()=>{ try{ return (JSON.parse(localStorage.getItem("tme-last")||"{}"))[S.who]; }catch(e){ return null; } };
+const keepTopic=()=>{ try{ const m=JSON.parse(localStorage.getItem("tme-last")||"{}"); m[S.who]=S.topic; localStorage.setItem("tme-last",JSON.stringify(m)); }catch(e){} };
 
 const $=(t,a={},k=[])=>{ const e=document.createElement(t); for(const [x,v] of Object.entries(a)){ if(x==="text") e.textContent=v; else if(x==="on") for(const [ev,f] of Object.entries(v)) e.addEventListener(ev,f); else if(v!==false&&v!=null) e.setAttribute(x,v===true?"":v); } for(const c of [].concat(k)) if(c!=null) e.append(c); return e; };
 const norm=s=>String(s||"").toLowerCase().replace(/[’‘]/g,"'").replace(/[“”"]/g,"").replace(/\s+/g," ").trim().replace(/[.!?]+$/,"").trim();
 const fmt=s=>Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
 let timers=[]; const clear=()=>{ timers.forEach(clearInterval); timers=[]; };
-function go(n){ clear(); S.step=n; S.stamp=today(); persist(); render(); scrollTo({top:0}); }
+function go(n){ clear(); if(rec && rec.state==="recording") rec.stop(); S.step=Math.max(0,Math.min(STEPS-1,n)); S.stamp=today(); persist(); render(); scrollTo({top:0}); }
 const next=(label,n,dis)=>$("button",{class:"btn",disabled:!!dis,on:{click:()=>go(n)}},label);
+/* Back and Skip: the same row on every step after the name. Skip moves on without doing the step. */
+const nav=(back,skip)=>$("div",{class:"nav"},[
+  $("button",{class:"btn line",disabled:!back,on:{click:back||(()=>{})}},"← Back"),
+  $("button",{class:"btn line",disabled:!skip,on:{click:skip||(()=>{})}},"Skip →")]);
+const where=()=>$("div",{class:"where"},[$("span",{text:"Step "+(S.step+1)+" of "+STEPS+" · "+STEP_NAMES[S.step]}),$("span",{text:S.who?NAMES[S.who]+(S.topic?" · "+S.topic:""):""})]);
 function render(){
   document.getElementById("bar").style.width=(S.step/(STEPS-1)*100)+"%";
   const app=document.getElementById("app"); app.replaceChildren();
-  [welcome,who,plan,wheel,read,speak,concept,practice,done][S.step]().forEach(x=>app.append(x));
+  if(S.step>1 && !S.who){ S.step=1; }
+  if(S.step>3 && !S.topic){ S.step=3; }
+  if(S.step>0) app.append(where());
+  [welcome,who,plan,wheel,read,speak,fix,concept,practice,done][S.step]().forEach(x=>app.append(x));
 }
 
 async function upload(path, blob, type){
@@ -188,21 +321,28 @@ async function upload(path, blob, type){
   if(!r.ok) throw new Error(r.status);
 }
 const hm=()=>{ const d=new Date(); return String(d.getHours()).padStart(2,"0")+String(d.getMinutes()).padStart(2,"0"); };
+/* A countdown on the wall clock, so a locked screen or a background tab cannot stretch it. */
+function countdown(secs, clk, onEnd){ const end=Date.now()+secs*1000;
+  const tick=()=>{ const left=Math.max(0,Math.ceil((end-Date.now())/1000)); clk.textContent=fmt(left); if(!left){ clear(); onEnd&&onEnd(); } };
+  tick(); timers.push(setInterval(tick,250)); return end; }
 
 /* 1 */ function welcome(){ return [
   $("h1",{text:"Welcome"}),
-  $("p",{class:"muted",text:"Twenty minutes of English, every day."}),
+  $("p",{class:"muted",text:"Twenty minutes of English, every day. Day "+DAY+"."}),
   next("Start",1)]; }
 
 /* 2 */ function who(){
   const g=$("div",{class:"two"});
-  for(const id of ["piyus","archita"]) g.append($("button",{class:"name",on:{click:()=>{ if(S.who!==id){ S.ans={}; S.qi=0; S.writing=""; S.sent=false; S.saved=false; S.topic=null; } S.who=id; go(2); }}},NAMES[id]));
-  return [$("h2",{text:"Who are you?"}), g]; }
+  for(const id of ["piyus","archita"]) g.append($("button",{class:"name",on:{click:()=>{ if(S.who!==id){ const k=fresh(); k.who=id; S=k; } go(2); }}},NAMES[id]));
+  return [$("h2",{text:"Who are you?"}), g, nav(()=>go(0),null)]; }
 
-/* 3 */ function plan(){ return [
+/* 3 */ function plan(){
+  const items=["Spin for a topic","Read for 3 minutes","Speak for 2 minutes","Fix your Day 1 mistakes","Learn today's rule","Answer 9 questions on your topic"];
+  return [
   $("h2",{text:"Today, "+NAMES[S.who]}),
-  $("ol",{class:"plan"},["Spin for a topic","Read for 3 minutes","Speak for 2 minutes","Learn one rule","Answer 15 questions"].map(t=>$("li",{text:t}))),
-  next("Spin the wheel",3)]; }
+  $("ol",{class:"plan"},items.map(t=>$("li",{text:t}))),
+  $("p",{class:"small",text:"Back and Skip are at the bottom of every step."}),
+  next("Spin the wheel",3), nav(()=>go(1),()=>go(3))]; }
 
 /* 4 */ function wheel(){
   const n=TOPICS.length, seg=360/n;
@@ -221,66 +361,59 @@ const hm=()=>{ const d=new Date(); return String(d.getHours()).padStart(2,"0")+S
   let turned=0;
   const out=$("p",{class:"topic",text:S.topic||" "});
   const go1=next("Next: read",4,!S.topic);
+  const pick=()=>{ const last=lastTopic(); const pool=TOPICS.map((t,i)=>i).filter(i=>TOPICS[i]!==last && TOPICS[i]!==S.topic); return pool[Math.floor(Math.random()*pool.length)]; };
+  const land=k=>{ S.topic=TOPICS[k]; S.ans={}; S.qi=0; keepTopic(); persist(); out.textContent=S.topic; };
   const spin=$("button",{class:"btn line",on:{click:()=>{
     spin.disabled=true; go1.disabled=true;
-    const k=Math.floor(Math.random()*n);
+    const k=pick();
     turned += 360*5 + ((360-(k+0.5)*seg) - (turned%360) + 360)%360;
     c.style.transform="rotate("+turned+"deg)";
-    const end=()=>{ S.topic=TOPICS[k]; persist(); out.textContent=S.topic; spin.disabled=false; spin.textContent="Spin again"; go1.disabled=false; };
+    const end=()=>{ land(k); spin.disabled=false; spin.textContent="Spin again"; go1.disabled=false; };
     matchMedia("(prefers-reduced-motion: reduce)").matches ? end() : setTimeout(end,4100);
   }}}, S.topic?"Spin again":"Spin");
-  return [$("h2",{text:"Your topic"}), box, out, spin, go1]; }
+  return [$("h2",{text:"Your topic"}), $("p",{class:"small center",text:"Any topic can come up, for either of you."}), box, out, spin, go1,
+    nav(()=>go(2),()=>{ if(!S.topic) land(pick()); go(4); })]; }
 
 /* 5 */ function read(){
-  let left=180; const clk=$("div",{class:"clock",text:fmt(left)});
-  const b=$("button",{class:"btn line",on:{click:()=>{ clear(); left=180; b.textContent="Restart"; timers.push(setInterval(()=>{ left=Math.max(0,left-1); clk.textContent=fmt(left); if(!left) clear(); },1000)); }}},"Start 3 minutes");
-  return [$("h2",{text:"Read and explore"}), $("p",{class:"topic",text:S.topic}), clk, b, next("Next: speak",5)]; }
+  const clk=$("div",{class:"clock",text:"3:00"});
+  const b=$("button",{class:"btn line",on:{click:()=>{ clear(); b.textContent="Restart"; countdown(180,clk); }}},"Start 3 minutes");
+  return [$("h2",{text:"Read and explore"}), $("p",{class:"topic",text:S.topic}),
+    $("p",{class:"small",text:"Search it, or just think. Find something to say about:"}),
+    $("ul",{class:"pts"},T[S.topic].read.map(t=>$("li",{text:t}))),
+    clk, b, next("Next: speak",5), nav(()=>go(3),()=>go(5))]; }
 
 /* 6 */ let rec=null;
 function speak(){
   const clk=$("div",{class:"clock",text:"2:00"});
-  const status=$("p",{class:"center small",text:S.sent?"Recording sent ✓":" "});
-  const go1=next("Next: today's rule",6);
+  const status=$("p",{class:"center small",text:S.sent?"Recording sent ✓":"Speak close to the phone, in a quiet room."});
   const mic=$("button",{class:"mic",on:{click:async()=>{
     if(rec && rec.state==="recording"){ rec.stop(); return; }
     let stream; try{ stream=await navigator.mediaDevices.getUserMedia({audio:true}); }catch(e){ status.textContent="Allow the microphone to record."; return; }
     const mime=["audio/webm","audio/mp4","audio/ogg"].find(m=>window.MediaRecorder&&MediaRecorder.isTypeSupported(m))||"";
-    const chunks=[]; rec=mime?new MediaRecorder(stream,{mimeType:mime}):new MediaRecorder(stream);
-    rec.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); };
-    rec.onstop=async()=>{
+    const chunks=[]; const r=mime?new MediaRecorder(stream,{mimeType:mime}):new MediaRecorder(stream); rec=r;
+    let end=0;
+    r.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); if(end && Date.now()>=end && r.state==="recording") r.stop(); };
+    r.onstop=async()=>{
       clear(); stream.getTracks().forEach(t=>t.stop()); mic.classList.remove("on"); mic.textContent="Record again";
-      const type=(rec.mimeType||mime||"audio/webm").split(";")[0];
+      const type=(r.mimeType||mime||"audio/webm").split(";")[0];
       const blob=new Blob(chunks,{type}); const ext={"audio/mp4":"m4a","audio/ogg":"ogg"}[type]||"webm";
       const path=S.who+"/"+today()+"/"+hm()+"-speaking."+ext;
       const send=async()=>{ status.textContent="Sending…"; try{ await upload(path,blob,type); S.sent=true; persist(); status.textContent="Recording sent ✓"; }catch(e){ status.replaceChildren("Not sent. ", $("button",{class:"chip",on:{click:send}},"Try again")); } };
       send();
     };
-    rec.start(); mic.classList.add("on"); mic.textContent="Stop";
-    let left=120; clk.textContent=fmt(left);
-    timers.push(setInterval(()=>{ left--; clk.textContent=fmt(Math.max(0,left)); if(left<=0 && rec.state==="recording") rec.stop(); },1000));
+    r.start(1000); mic.classList.add("on"); mic.textContent="Stop";
+    end=countdown(120,clk,()=>{ if(r.state==="recording") r.stop(); });
   }}}, S.sent?"Record again":"Record");
-  return [$("h2",{text:"Speak"}), $("p",{class:"topic",text:S.topic}), clk, mic, status, go1]; }
+  return [$("h2",{text:"Speak"}), $("p",{class:"topic",text:S.topic}),
+    $("ul",{class:"pts"},T[S.topic].speak.map(t=>$("li",{text:t}))),
+    clk, mic, status, next("Next: fix Day 1",6), nav(()=>go(4),()=>go(6))]; }
 
-/* 7 */ function concept(){
-  const ex=(yes,no)=>$("div",{class:"ex"},[$("p",{class:"yes",text:"✓ "+yes}), no?$("p",{class:"no",text:no}):null]);
-  const a=S.who==="archita";
-  return [
-    $("h2",{text:"I have done or I did?"}),
-    $("div",{class:"rule"},[$("p",{},[$("b",{text:"Finished time → past. "}),"yesterday, last year, in 1949, ago"])]),
-    $("div",{class:"rule"},[$("p",{},[$("b",{text:"Time up to now → has / have. "}),"since, for, ever, already, this year"])]),
-    ...(a?[ex("The Constitution came into force in 1950.","The Constitution has come into force in 1950."),
-           ex("India has amended it many times since 1951."),
-           ex("I read the Preamble yesterday.","I have read the Preamble yesterday.")]
-         :[ex("I finished the circuit last night.","I have finished the circuit last night."),
-           ex("I have worked with ESP32 boards for two years."),
-           ex("The test failed on Monday.","The test has failed on Monday.")]),
-    next("Next: 15 questions",7)]; }
-
-/* 8 */ function score(){ let n=0; SETS[SETFOR[S.who]].forEach((q,i)=>{ if(S.ans[i]&&S.ans[i].ok===true) n++; }); return n; }
-function practice(){
-  const set=SETS[SETFOR[S.who]], i=S.qi, q=set[i], a=S.ans[i];
+/* A round of questions, shared by Fix Day 1 and the topic questions. */
+function quiz(set, store, idx, back, finish){
+  const i=S[idx], q=set[i], a=S[store][i];
   const out=[$("div",{class:"kind"},[$("span",{text:(i+1)+" / "+set.length}),$("span",{text:q.kind})])];
-  const commit=(given,ok)=>{ S.ans[i]={given,ok}; persist(); render(); };
+  const commit=(given,ok)=>{ S[store][i]={given,ok}; persist(); render(); };
+  const move=d=>{ S[idx]=i+d; persist(); render(); scrollTo({top:0}); };
   if(q.t!=="order") out.push($("p",{class:"q",text:q.q}));
   if(q.t==="mcq"){ const b=$("div",{class:"opts"}); q.o.forEach((o,k)=>b.append($("button",{class:"opt"+(a?(k===q.a?" right":(a.given===o?" wrong":"")):""),disabled:!!a,on:{click:()=>commit(o,k===q.a)}},o))); out.push(b); }
   else if(q.t==="error"){ const b=$("div",{class:"parts"}); q.parts.forEach((p,k)=>b.append($("button",{class:"chip"+(a?(k===q.a?" right":(a.given===p?" wrong":"")):""),disabled:!!a,on:{click:()=>commit(p,k===q.a)}},p))); out.push(b); }
@@ -288,7 +421,7 @@ function practice(){
     const chk=$("button",{class:"btn line",on:{click:()=>{ if(inp.value.trim()) commit(inp.value.trim(), q.acc.includes(norm(inp.value))); }}},"Check");
     inp.addEventListener("keydown",e=>{ if(e.key==="Enter") chk.click(); }); out.push(inp); if(!a) out.push(chk); }
   else if(q.t==="order"){ out.push($("p",{class:"q",text:"Put the words in order."}));
-    const picked=a?a.given.split(" | "):[]; const tray=$("div",{class:"tray"}), pool=$("div",{class:"parts"});
+    const picked=a&&a.given?a.given.split(" | "):[]; const tray=$("div",{class:"tray"}), pool=$("div",{class:"parts"});
     const sh=q.words.map((w,k)=>({w,k})).sort((x,y)=>((x.k*7+3)%q.words.length)-((y.k*7+3)%q.words.length));
     const chk=$("button",{class:"btn line",on:{click:()=>commit(picked.join(" | "),picked.join(" ")===q.words.join(" "))}},"Check");
     const draw=()=>{ tray.replaceChildren(); pool.replaceChildren();
@@ -296,25 +429,55 @@ function practice(){
       sh.forEach(({w})=>{ if(!picked.includes(w)) pool.append($("button",{class:"chip",disabled:!!a,on:{click:()=>{picked.push(w);draw();}}},w)); });
       chk.disabled=!!a||picked.length!==q.words.length; };
     draw(); out.push(tray,pool); if(!a) out.push(chk); }
-  else if(q.t==="write"){ const ta=$("textarea",{id:"w"+i,placeholder:"Two sentences"}); ta.value=a?a.given:S.writing; ta.disabled=!!a; ta.addEventListener("input",()=>{S.writing=ta.value;persist();});
+  else if(q.t==="write"){ const ta=$("textarea",{id:"w"+i,placeholder:"Two questions"}); ta.value=a?a.given:""; ta.disabled=!!a;
     out.push(ta); if(!a) out.push($("button",{class:"btn line",on:{click:()=>{ if(ta.value.trim().length>7) commit(ta.value.trim(),null); }}},"Done")); }
   if(a){ const right=q.t==="mcq"?q.o[q.a]:q.t==="error"?q.fix:q.t==="order"?q.words.join(" "):q.t==="fill"?q.acc[0]:q.model;
-    out.push($("div",{class:"fb"},[ q.t==="write"?$("b",{text:"Example"}):$("b",{class:a.ok?"ok":"no",text:a.ok?"Correct":"Answer: "+right}),
-      q.t==="write"?$("p",{text:q.model}):null, $("p",{class:"small",text:q.why})])); }
+    const head=a.ok==="skip"?"Skipped. Answer: "+right:q.t==="write"?"Example":a.ok?"Correct":"Answer: "+right;
+    out.push($("div",{class:"fb"},[ $("b",{class:a.ok===true?"ok":(q.t==="write"&&a.ok!=="skip"?"":"no"),text:head}),
+      q.t==="write"&&a.ok!=="skip"?$("p",{text:q.model}):null, $("p",{class:"small",text:q.why})])); }
   const last=i===set.length-1;
-  out.push($("button",{class:"btn",disabled:!a,on:{click:()=>{ if(last) go(8); else { S.qi=i+1; persist(); render(); scrollTo({top:0}); } }}},last?"Finish":"Next"));
+  out.push($("button",{class:"btn",disabled:!a,on:{click:()=>{ if(last) finish(); else move(1); }}},last?"Finish":"Next"));
+  out.push(nav(()=>{ if(i>0) move(-1); else back(); },
+               ()=>{ if(!a){ S[store][i]={given:"",ok:"skip"}; persist(); } if(last) finish(); else move(1); }));
   return out; }
 
+/* 7 */ function fix(){
+  const set=REVIEW[S.who];
+  const intro=[$("h2",{text:"Fix Day 1"}),$("p",{class:"small",text:"The "+set.length+" you got wrong on Day 1. Try them again."})];
+  return intro.concat(quiz(set,"rev","ri",()=>go(5),()=>go(7))); }
+
+/* 8 */ function concept(){
+  const ex=(yes,no)=>$("div",{class:"ex"},[$("p",{class:"yes",text:"✓ "+yes}), no?$("p",{class:"no",text:no}):null]);
+  return [
+    $("h2",{text:"How to ask a question"}),
+    $("div",{class:"rule"},[$("p",{},[$("b",{text:"The helping verb goes before the subject. "}),"do, does, did, is, are, was, have, has"])]),
+    $("div",{class:"rule"},[$("p",{},[$("b",{text:"After do, does or did, the verb stays plain. "}),"Did you go? never Did you went? Does it work? never Does it works?"])]),
+    ex("How does this sensor work?","How this sensor works?"),
+    ex("When was the Constitution adopted?","When the Constitution was adopted?"),
+    ex("What did you eat today?","What did you ate today?"),
+    $("p",{class:"small",text:"Both of you got this wrong on Day 1, and both got “has adopted / have finished” wrong too. Those come back in the questions."}),
+    next("Next: 9 questions",8), nav(()=>{ S.ri=Math.max(0,REVIEW[S.who].length-1); go(6); },()=>go(8))]; }
+
+/* 9 */ function score(set,store){ let n=0; set.forEach((q,i)=>{ if(S[store][i]&&S[store][i].ok===true) n++; }); return n; }
+function practice(){
+  const set=setFor(S.topic);
+  return [$("p",{class:"topic",text:S.topic})].concat(quiz(set,"ans","qi",()=>go(7),()=>go(9))); }
+
 /* end */ function done(){
-  const set=SETS[SETFOR[S.who]];
+  const set=setFor(S.topic), rset=REVIEW[S.who];
+  const pack=(qs,store)=>qs.map((q,i)=>{ const a=S[store][i]; return a?[a.given, a.ok===true?1:(a.ok===false?0:null)]:null; });
   const status=$("p",{class:"center small",text:"Sending…"});
-  const result={who:S.who,date:today(),topic:S.topic,concept:"present perfect vs simple past",set:SETFOR[S.who],
-    score:score(),of:set.length-1,ans:set.map((q,i)=>S.ans[i]?[S.ans[i].given,S.ans[i].ok===true?1:(S.ans[i].ok===false?0:null)]:null),
+  const result={who:S.who,date:today(),day:DAY,topic:S.topic,concept:CONCEPT,
+    score:score(set,"ans"),of:set.length-1,ans:pack(set,"ans"),
+    review:{score:score(rset,"rev"),of:rset.length,ans:pack(rset,"rev")},
+    skipped:Object.values(S.ans).concat(Object.values(S.rev)).filter(a=>a.ok==="skip").length,
     writing:(S.ans[set.length-1]||{}).given||"",recordingSent:S.sent};
   const send=async()=>{ status.textContent="Sending…"; try{ await upload(S.who+"/"+today()+"/"+hm()+"-result.json", new Blob([JSON.stringify(result,null,2)],{type:"application/json"}),"application/json"); status.textContent="Saved ✓"; }catch(e){ status.replaceChildren("Not saved. ",$("button",{class:"chip",on:{click:send}},"Try again")); } };
   if(S.saved) status.textContent="Saved ✓"; else { S.saved=true; persist(); send(); }
-  return [$("h2",{text:"Done"}), $("div",{class:"clock",text:score()+"/"+(set.length-1)}), status,
-    $("button",{class:"btn line",on:{click:()=>{ S={step:1,who:null,topic:null,qi:0,ans:{},writing:"",sent:false,saved:false,stamp:today()}; persist(); render(); }}},"Next person")]; }
+  return [$("h2",{text:"Done"}), $("div",{class:"clock",text:result.score+"/"+result.of}),
+    $("p",{class:"center small",text:"Fix Day 1: "+result.review.score+"/"+result.review.of}), status,
+    $("button",{class:"btn line",on:{click:()=>{ S=fresh(); S.step=1; S.stamp=today(); persist(); render(); }}},"Next person"),
+    nav(()=>{ S.qi=set.length-1; go(8); },null)]; }
 
 render();
 </script>
